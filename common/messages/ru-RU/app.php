@@ -10,4 +10,11 @@ return [
 	'Users Roles'   => 'Роли пользователей',
 
 	'Forbidden' => 'Действие запрещено.',
+
+	'Name'       => 'Название',
+	'Created At' => 'Создан',
+	'Updated At' => 'Изменен',
+
+	'Contractor'  => 'Контрагент',
+	'Contractors' => 'Контрагенты',
 ];
