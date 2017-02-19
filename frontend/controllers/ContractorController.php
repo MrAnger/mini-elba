@@ -1,9 +1,11 @@
 <?php
 namespace frontend\controllers;
 
+use common\helpers\ContractorHelper;
 use common\models\Contractor;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -11,8 +13,12 @@ use yii\web\NotFoundHttpException;
  */
 class ContractorController extends BaseController {
 	public function actionIndex() {
+		$query = Contractor::find();
+
+		ContractorHelper::applyAccessByUser($query);
+
 		$dataProvider = new ActiveDataProvider([
-			'query' => Contractor::find(),
+			'query' => $query,
 		]);
 
 		$dataProvider->sort->defaultOrder = [
@@ -27,7 +33,9 @@ class ContractorController extends BaseController {
 	public function actionCreate() {
 		$request = Yii::$app->request;
 
-		$model = new Contractor();
+		$model = new Contractor([
+			'user_id' => Yii::$app->user->id,
+		]);
 
 		if ($model->load($request->post()) && $model->save()) {
 			Yii::$app->session->addFlash('success', 'Контрагент успешно создан.');
@@ -45,6 +53,9 @@ class ContractorController extends BaseController {
 
 		$model = $this->findModel($id);
 
+		if (!ContractorHelper::isAccessAllowed($model))
+			throw new ForbiddenHttpException;
+
 		if ($model->load($request->post()) && $model->save()) {
 			Yii::$app->session->addFlash('success', 'Контрагент успешно изменен.');
 
@@ -58,6 +69,9 @@ class ContractorController extends BaseController {
 
 	public function actionDelete($id) {
 		$model = $this->findModel($id);
+
+		if (!ContractorHelper::isAccessAllowed($model))
+			throw new ForbiddenHttpException;
 
 		$model->delete();
 

@@ -7,6 +7,7 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 
 /**
+ * @property User $user
  */
 class Contractor extends ContractorBase {
 	/**
@@ -19,5 +20,12 @@ class Contractor extends ContractorBase {
 				'value' => new Expression('NOW()'),
 			],
 		];
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getUser() {
+		return $this->hasOne(User::className(), ['id' => 'user_id']);
 	}
 }
