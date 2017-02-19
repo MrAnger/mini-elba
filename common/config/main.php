@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'name'           => 'Project name',
+	'name'           => 'Mini Elba',
 	'language'       => 'ru-RU',
 	'sourceLanguage' => 'en-US',
 	'timeZone'       => 'Europe/Moscow',

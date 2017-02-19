@@ -1,13 +1,20 @@
 <?php
 
 /**
- * @var $this \yii\web\View
- * @var $content string
+ * @var \yii\web\View $this
+ * @var string $content
  */
 
 use yii\helpers\Html;
 
+$titleBase = Yii::$app->name;
+
 $request = Yii::$app->request;
+
+if (!empty($this->title))
+	$title = $this->title . ' — ' . $titleBase;
+else
+	$title = $titleBase;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -17,7 +24,8 @@ $request = Yii::$app->request;
 	<meta charset="<?= Yii::$app->charset ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<?= Html::csrfMetaTags() ?>
-	<title><?= Html::encode($this->title) ?></title>
+	<title><?= Html::encode($title) ?></title>
+	<?= $this->render('_head') ?>
 	<?php $this->head() ?>
 </head>
 <body>

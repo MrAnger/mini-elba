@@ -35,7 +35,7 @@ abstract class BaseController extends Controller {
 		return [
 			[
 				'allow' => true,
-				'roles' => ['?', '@'],
+				'roles' => ['@'],
 			],
 		];
 	}
