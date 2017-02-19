@@ -12,9 +12,17 @@ return [
 	'Forbidden' => 'Действие запрещено.',
 
 	'Name'       => 'Название',
+	'Comment'    => 'Комментарий',
+	'Quantity'   => 'Кол-во',
+	'Unit'       => 'Ед. измерения',
+	'Price'      => 'Цена',
+	'Summary'    => 'Всего',
 	'Created At' => 'Создан',
 	'Updated At' => 'Изменен',
 
 	'Contractor'  => 'Контрагент',
 	'Contractors' => 'Контрагенты',
+
+	'Invoice'  => 'Счёт',
+	'Invoices' => 'Счёта',
 ];

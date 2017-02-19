@@ -51,3 +51,11 @@ a.desc:after {
 .action-column {
     width: 75px;
 }
+
+.contractor-column {
+    width: 120px;
+}
+
+.paid-status-column {
+    width: 230px;
+}

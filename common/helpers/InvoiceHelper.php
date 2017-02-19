@@ -2,27 +2,27 @@
 
 namespace common\helpers;
 
-use common\models\Contractor;
+use common\models\Invoice;
 use Yii;
 use yii\base\Model;
 use yii\db\ActiveQuery;
 use yii\helpers\ArrayHelper;
 
 
-class ContractorHelper extends Model {
+class InvoiceHelper extends Model {
 	/**
 	 * @param ActiveQuery $query
 	 *
 	 * @return ActiveQuery
 	 */
 	public static function applyAccessByUser($query) {
-		$query->andWhere(['=', Contractor::tableName() . '.user_id', Yii::$app->user->id]);
+		$query->andWhere(['=', Invoice::tableName() . '.user_id', Yii::$app->user->id]);
 
 		return $query;
 	}
 
 	/**
-	 * @param Contractor $model
+	 * @param Invoice $model
 	 *
 	 * @return boolean
 	 */

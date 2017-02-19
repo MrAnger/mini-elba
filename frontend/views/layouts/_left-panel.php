@@ -18,6 +18,10 @@ $userModel = $user->identity;
 
 $mainMenuItems = [
 	[
+		'label' => 'Счета',
+		'url'   => ['/invoice/index'],
+	],
+	[
 		'label' => 'Контрагенты',
 		'url'   => ['/contractor/index'],
 	],
