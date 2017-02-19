@@ -88,5 +88,61 @@
                 calculateInvoiceSummary();
             }
         });
+
+        // Скрипт запуска модального окна для изменения баланса позиции счета
+        $(document).on('click', '.js-change-item-paid', function (e) {
+            e.preventDefault();
+
+            var $el = $(this),
+                url = $el.attr('href');
+
+            $.get(url, function (response) {
+                var $modal = $('#modal-change-invoice-item-paid'),
+                    $form = $modal.find('form');
+
+                $form.data('item-id', response.item.id);
+                $form.data('available-sum', response.availableSum);
+
+                $form.find('.js-item-name').html(response.item.name);
+                $form.find('.js-item-summary').html(response.formattedSummary);
+                $form.find('.js-input-paid').data('max', response.availableSum);
+                $form.find('.js-item-id').val(response.item.id);
+                $form.find('.js-input-paid')
+                    .attr('placeholder', $.format.number(response.availableSum, '#,##0.00#'))
+                    .val('');
+
+                $form.yiiActiveForm('resetForm');
+
+                $modal.modal('show');
+            });
+        });
+
+        $(document).on('beforeSubmit', '#modal-change-invoice-item-paid form', function (e) {
+            var $form = $(this),
+                $modal = $form.parents('#modal-change-invoice-item-paid');
+
+            $.ajax({
+                url: $form.attr('action'),
+                type: 'POST',
+                data: $form.serialize(),
+                success: function (response) {
+                    if (response) {
+                        $.pjax({
+                            url: window.location.href,
+                            container: $('#invoice-item-list'),
+                            scrollTo: false,
+                            timeout: 8000
+                        });
+
+                        $modal.modal('hide');
+                    }
+                },
+                error: function (e) {
+                    alert('Произошла ошибка при отправке запроса. Пожалуйста, попробуйте позже.');
+                }
+            });
+
+            return false;
+        });
     });
 })(jQuery);

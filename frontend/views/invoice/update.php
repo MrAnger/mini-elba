@@ -17,7 +17,10 @@ $this->params['breadcrumbs'] = [
 		'label' => Yii::t('app', 'Invoices'),
 		'url'   => ['index'],
 	],
-	$model->name,
+	[
+		'label' => $model->name,
+		'url'   => ['view', 'id' => $model->id],
+	],
 	$this->title,
 ];
 

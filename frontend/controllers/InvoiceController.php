@@ -9,8 +9,11 @@ use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\widgets\ActiveForm;
 
 /**
  * @author MrAnger
@@ -74,7 +77,7 @@ class InvoiceController extends BaseController {
 
 					Yii::$app->session->addFlash('success', 'Счёт успешно создан.');
 
-					return $this->redirect(['update', 'id' => $model->id]);
+					return $this->redirect(['view', 'id' => $model->id]);
 				} catch (\Exception $e) {
 					$transaction->rollBack();
 
@@ -132,7 +135,7 @@ class InvoiceController extends BaseController {
 
 					Yii::$app->session->addFlash('success', 'Счёт успешно изменен.');
 
-					return $this->redirect(['update', 'id' => $model->id]);
+					return $this->redirect(['view', 'id' => $model->id]);
 				} catch (\Exception $e) {
 					$transaction->rollBack();
 
@@ -147,6 +150,17 @@ class InvoiceController extends BaseController {
 		]);
 	}
 
+	public function actionView($id) {
+		$model = $this->findModel($id);
+
+		if (!InvoiceHelper::isAccessAllowed($model))
+			throw new ForbiddenHttpException;
+
+		return $this->render('view', [
+			'model' => $model,
+		]);
+	}
+
 	public function actionDelete($id) {
 		$model = $this->findModel($id);
 
@@ -158,6 +172,71 @@ class InvoiceController extends BaseController {
 		Yii::$app->session->addFlash('success', 'Счёт успешно удален.');
 
 		return $this->redirect(Yii::$app->request->referrer);
+	}
+
+	public function actionGetItemPaid($itemId) {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$itemModel = $this->findItemModel($itemId);
+
+		if (!InvoiceHelper::isAccessAllowed($itemModel->invoice))
+			throw new ForbiddenHttpException;
+
+		$formatter = Yii::$app->formatter;
+
+		$availableSum = $itemModel->invoice->total_paid;
+
+		foreach ($itemModel->invoice->items as $item) {
+			if ($item->id == $itemModel->id)
+				continue;
+
+			$availableSum -= $item->total_paid;
+		}
+
+		if ($availableSum > $itemModel->summary) {
+			$availableSum = $itemModel->summary;
+		}
+
+		$output = [
+			'item'             => $itemModel->attributes,
+			'formattedSummary' => $formatter->asCurrency($itemModel->summary),
+			'availableSum'     => $availableSum,
+		];
+
+		return $output;
+	}
+
+	public function actionItemPaidForm() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$itemModel = $this->findItemModel(Yii::$app->request->post('itemId'));
+
+		if (!InvoiceHelper::isAccessAllowed($itemModel->invoice))
+			throw new ForbiddenHttpException;
+
+		if ($itemModel->load(Yii::$app->request->post()) && $itemModel->validate()) {
+			if ($itemModel->total_paid >= $itemModel->summary)
+				$itemModel->is_paid = 1;
+			else
+				$itemModel->is_paid = 0;
+
+			return $itemModel->save(false);
+		}
+
+		throw new BadRequestHttpException;
+	}
+
+	public function actionValidateItemPaidForm() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$itemModel = $this->findItemModel(Yii::$app->request->post('itemId'));
+
+		if (!InvoiceHelper::isAccessAllowed($itemModel->invoice))
+			throw new ForbiddenHttpException;
+
+		$itemModel->load(Yii::$app->request->post());
+
+		return ActiveForm::validate($itemModel);
 	}
 
 	/**
@@ -203,8 +282,11 @@ class InvoiceController extends BaseController {
 				$itemModel = $this->findItemModel($itemId);
 
 				if ($itemModel !== null) {
-					$itemModel->load($itemData, '');
-					$items[$itemModel->id] = $itemModel;
+					// Проверяем, действительно ли данный айтим привязан к данному счету
+					if ($itemModel->invoice_id == $model->id) {
+						$itemModel->load($itemData, '');
+						$items[$itemModel->id] = $itemModel;
+					}
 				}
 			} else {
 				$itemData['invoice_id'] = -1;
@@ -223,14 +305,20 @@ class InvoiceController extends BaseController {
 	 */
 	protected function calculateInvoiceSummary($model) {
 		$summary = 0;
+		$isPaid = 0;
 
 		foreach ($model->getItems()->all() as $item) {
 			/** @var InvoiceItem $item */
 			$summary += $item->summary;
 		}
 
+		if ($model->total_paid >= $summary) {
+			$isPaid = 1;
+		}
+
 		$model->updateAttributes([
 			'summary' => $summary,
+			'is_paid' => $isPaid,
 		]);
 	}
 }

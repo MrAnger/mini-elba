@@ -46,7 +46,7 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 				'value'     => function (Invoice $model) {
 					$formatter = Yii::$app->formatter;
 
-					$html = "<b>$model->name</b>";
+					$html = Html::a("<b>$model->name</b>", ['view', 'id' => $model->id]);
 
 					$html .= "<br><small>" . $formatter->asDate($model->created_at) . " / " . $formatter->asDate($model->updated_at) . "</small>";
 
@@ -94,7 +94,7 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 				'value'         => function (Invoice $model) {
 					$formatter = Yii::$app->formatter;
 
-					$html = "<i>" . $formatter->asCurrency($model->total_paid) . "</i> / <b>" . $formatter->asCurrency($model->summary) . "</b>";
+					$html = "<i class='" . (($model->is_paid) ? 'text-success' : 'text-danger') . "'>" . $formatter->asCurrency($model->total_paid) . "</i> / <b>" . $formatter->asCurrency($model->summary) . "</b>";
 
 					return $html;
 				},
