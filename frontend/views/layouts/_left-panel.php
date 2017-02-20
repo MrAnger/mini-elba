@@ -18,12 +18,19 @@ $userModel = $user->identity;
 
 $mainMenuItems = [
 	[
+		'label' => 'Деньги',
+		'url'   => ['/payment/index'],
+		'icon'  => 'fa fa-money',
+	],
+	[
 		'label' => 'Счета',
 		'url'   => ['/invoice/index'],
+		'icon'  => 'fa fa-book',
 	],
 	[
 		'label' => 'Контрагенты',
 		'url'   => ['/contractor/index'],
+		'icon'  => 'fa fa-users',
 	],
 ];
 

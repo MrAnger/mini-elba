@@ -7,3 +7,10 @@ Yii::$container->set('yii\validators\DateValidator', [
 Yii::$container->set('mranger\ckeditor\CKEditor', [
 	'preset' => 'default',
 ]);
+
+Yii::$container->set('kartik\widgets\DatePicker', [
+	'pluginOptions' => [
+		'autoclose' => true,
+		'format'    => 'yyyy-mm-dd',
+	],
+]);

@@ -11,15 +11,22 @@ return [
 
 	'Forbidden' => 'Действие запрещено.',
 
-	'Name'       => 'Название',
-	'Comment'    => 'Комментарий',
-	'Inn'        => 'ИНН',
-	'Quantity'   => 'Кол-во',
-	'Unit'       => 'Ед. измерения',
-	'Price'      => 'Цена',
-	'Summary'    => 'Всего',
-	'Created At' => 'Создан',
-	'Updated At' => 'Изменен',
+	'Name'            => 'Название',
+	'Comment'         => 'Комментарий',
+	'Inn'             => 'ИНН',
+	'Quantity'        => 'Кол-во',
+	'Unit'            => 'Ед. измерения',
+	'Price'           => 'Цена',
+	'Sum'             => 'Сумма',
+	'Summary'         => 'Всего',
+	'Date'            => 'Дата',
+	'Income'          => 'Поступление',
+	'Outcome'         => 'Списание',
+	'Operation Code'  => 'Код операции',
+	'Document Number' => 'Номер документа',
+	'Description'     => 'Описание',
+	'Created At'      => 'Создан',
+	'Updated At'      => 'Изменен',
 
 	'{delta, plural, =1{1 invoice} other{# invoices}}' => '{delta, plural, one{# счёт} few{# счетов} many{# счетов} other{# счетов}}',
 
@@ -28,4 +35,7 @@ return [
 
 	'Invoice'  => 'Счёт',
 	'Invoices' => 'Счета',
+
+	'Payment'  => 'Поступление',
+	'Payments' => 'Поступления',
 ];

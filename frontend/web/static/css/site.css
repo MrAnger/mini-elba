@@ -59,3 +59,11 @@ a.desc:after {
 .paid-status-column {
     width: 230px;
 }
+
+.date-column {
+    width: 150px;
+}
+
+.income-column {
+    width: 200px;
+}
