@@ -25,7 +25,7 @@ class InvoiceController extends BaseController {
 		$dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
 		$dataProvider->sort->defaultOrder = [
-			'created_at' => SORT_ASC,
+			'created_at' => SORT_DESC,
 		];
 
 		return $this->render('index', [

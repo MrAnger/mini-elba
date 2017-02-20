@@ -32,8 +32,8 @@ class InvoiceItemBase extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['invoice_id', 'name', 'summary'], 'required'],
-			[['invoice_id', 'quantity'], 'integer'],
-			[['price', 'summary', 'total_paid'], 'number'],
+			[['invoice_id'], 'integer'],
+			[['price', 'summary', 'total_paid', 'quantity'], 'number'],
 			[['is_paid'], 'boolean'],
 			[['name'], 'string', 'max' => 250],
 			[['unit'], 'string', 'max' => 10],

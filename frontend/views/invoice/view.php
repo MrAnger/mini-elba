@@ -97,13 +97,13 @@ $debtString = ($debts) ? "<br><span class='text-danger'>Задолженност
 							<?= $item->name ?>
 						</td>
 						<td class="text-center">
-							<?= $formatter->asInteger($item->quantity) ?>
+							<?= ($item->quantity !== null) ? $formatter->asDecimal($item->quantity) : '' ?>
 						</td>
 						<td class="text-center">
 							<?= $item->unit ?>
 						</td>
 						<td class="text-center">
-							<?= $formatter->asCurrency($item->price) ?>
+							<?= ($item->price !== null) ? $formatter->asCurrency($item->price) : '' ?>
 						</td>
 						<td class="text-right">
 							<a href="<?= Url::to(['/invoice/get-item-paid', 'itemId' => $item->id]) ?>"
