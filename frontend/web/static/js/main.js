@@ -54,12 +54,18 @@
 
             $summaryHolder.html($.format.number(summary, '#,##0.00#'));
         }
+        calculateInvoiceSummary();
 
         $(document).on('keyup', '.js-input-summary', function (e) {
             var $item = $(this).parents('.item'),
                 $quantity = $item.find('.js-input-quantity'),
                 $price = $item.find('.js-input-price'),
                 $summary = $item.find('.js-input-summary');
+
+            // Исправляем запятые на точки
+            if ($summary.val().length > 0) {
+                $summary.val($summary.val().replace(/,/ig, '.'));
+            }
 
             var q = parseFloat($quantity.val()),
                 p = parseFloat($price.val()),
@@ -73,11 +79,20 @@
         });
 
         // Скрипт автоматического расчета суммы позиции счета при изменении кол-ва или стоимости за единицу
-        $(document).on('keyup', '.js-input-quantity, .js-input-price', function (e) {
+        $(document).on('keyup change', '.js-input-quantity, .js-input-price', function (e) {
             var $item = $(this).parents('.item'),
                 $quantity = $item.find('.js-input-quantity'),
                 $price = $item.find('.js-input-price'),
                 $summary = $item.find('.js-input-summary');
+
+            // Исправляем запятые на точки
+            if ($quantity.val().length > 0) {
+                $quantity.val($quantity.val().replace(/,/ig, '.'));
+            }
+
+            if ($price.val().length > 0) {
+                $price.val($price.val().replace(/,/ig, '.'));
+            }
 
             var q = parseFloat($quantity.val()),
                 p = parseFloat($price.val());

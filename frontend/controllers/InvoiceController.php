@@ -28,6 +28,8 @@ class InvoiceController extends BaseController {
 			'created_at' => SORT_DESC,
 		];
 
+		$dataProvider->pagination->pageSize = 50;
+
 		return $this->render('index', [
 			'searchModel'  => $searchModel,
 			'dataProvider' => $dataProvider,

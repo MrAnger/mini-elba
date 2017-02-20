@@ -13,6 +13,7 @@ return [
 
 	'Name'       => 'Название',
 	'Comment'    => 'Комментарий',
+	'Inn'        => 'ИНН',
 	'Quantity'   => 'Кол-во',
 	'Unit'       => 'Ед. измерения',
 	'Price'      => 'Цена',
@@ -20,9 +21,11 @@ return [
 	'Created At' => 'Создан',
 	'Updated At' => 'Изменен',
 
+	'{delta, plural, =1{1 invoice} other{# invoices}}' => '{delta, plural, one{# счёт} few{# счетов} many{# счетов} other{# счетов}}',
+
 	'Contractor'  => 'Контрагент',
 	'Contractors' => 'Контрагенты',
 
 	'Invoice'  => 'Счёт',
-	'Invoices' => 'Счёта',
+	'Invoices' => 'Счета',
 ];

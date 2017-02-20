@@ -11,8 +11,8 @@ use Yii;
  * @property integer $user_id
  * @property string $contractor_id
  * @property string $name
- * @property string $summary
- * @property string $total_paid
+ * @property float $summary
+ * @property float $total_paid
  * @property boolean $is_paid
  * @property string $comment
  * @property string $created_at

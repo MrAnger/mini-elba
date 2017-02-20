@@ -34,6 +34,9 @@ $this->params['breadcrumbs'] = [
 
 					$html = "<b>$model->name</b>";
 
+					if ($model->inn !== null)
+						$html .= "<br><b>ИНН:</b> <i>$model->inn</i>";
+
 					$html .= "<br><small>" . $formatter->asDate($model->created_at) . " / " . $formatter->asDate($model->updated_at) . "</small>";
 
 					return $html;

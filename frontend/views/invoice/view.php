@@ -59,6 +59,7 @@ $debtString = ($debts) ? "<br><span class='text-danger'>Задолженност
 			<h3>Комментарий</h3>
 
 			<p><?= $model->comment ?></p>
+			<hr>
 		</div>
 	<?php endif; ?>
 

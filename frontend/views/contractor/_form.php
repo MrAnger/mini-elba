@@ -23,6 +23,12 @@ use yii\helpers\ArrayHelper;
 					'maxlength' => true,
 				])
 			?>
+
+			<?= $form->field($model, 'inn')
+				->textInput([
+					'maxlength' => true,
+				])
+			?>
 		</div>
 	</div>
 

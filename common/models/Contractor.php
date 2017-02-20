@@ -23,6 +23,16 @@ class Contractor extends ContractorBase {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function rules() {
+		return array_merge(parent::rules(), [
+			[['inn'], 'trim'],
+			[['inn'], 'default'],
+		]);
+	}
+
+	/**
 	 * @return \yii\db\ActiveQuery
 	 */
 	public function getUser() {
