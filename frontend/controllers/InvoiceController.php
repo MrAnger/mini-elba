@@ -186,18 +186,7 @@ class InvoiceController extends BaseController {
 
 		$formatter = Yii::$app->formatter;
 
-		$availableSum = $itemModel->invoice->total_paid;
-
-		foreach ($itemModel->invoice->items as $item) {
-			if ($item->id == $itemModel->id)
-				continue;
-
-			$availableSum -= $item->total_paid;
-		}
-
-		if ($availableSum > $itemModel->summary) {
-			$availableSum = $itemModel->summary;
-		}
+		$availableSum = $itemModel->getAvailableTotalPaid();
 
 		$output = [
 			'item'             => $itemModel->attributes,

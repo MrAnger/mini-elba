@@ -77,4 +77,24 @@ class Payment extends PaymentBase {
 
 		return ($linkedSum >= $this->income);
 	}
+
+	/**
+	 * @return float
+	 */
+	public function getAvailableLinkSum() {
+		if ($this->isNewRecord)
+			return 0;
+
+		$availableSum = $this->income;
+
+		foreach ($this->invoiceLinks as $link) {
+			$availableSum -= $link->sum;
+		}
+
+		if ($availableSum < 0) {
+			$availableSum = 0;
+		}
+
+		return $availableSum;
+	}
 }

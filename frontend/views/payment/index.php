@@ -78,7 +78,7 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 
 						$html .= "</div>";
 					} else {
-						$html .= "<br>" . Html::a('Связать со счётом', '#', [
+						$html .= "<br>" . Html::a('Связать со счётом', ['/payment/get-invoice-link-data', 'paymentId' => $model->id], [
 								'class' => 'btn btn-primary btn-xs js-link-payment-to-invoice',
 							]);
 					}
@@ -155,4 +155,6 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 	]) ?>
 
 	<?php $pjax::end() ?>
+
+	<?= $this->render('_modals') ?>
 </div>

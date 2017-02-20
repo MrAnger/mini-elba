@@ -1,13 +1,16 @@
 <?php
 namespace frontend\controllers;
 
+use common\helpers\InvoiceHelper;
 use common\helpers\PaymentHelper;
+use common\models\Invoice;
 use common\models\Payment;
 use frontend\models\PaymentSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * @author MrAnger
@@ -91,33 +94,58 @@ class PaymentController extends BaseController {
 		return $this->redirect(Yii::$app->request->referrer);
 	}
 
-	public function actionGetItemPaid($itemId) {
+	public function actionGetInvoiceLinkData($paymentId) {
 		Yii::$app->response->format = Response::FORMAT_JSON;
 
-		$itemModel = $this->findItemModel($itemId);
+		$paymentModel = $this->findModel($paymentId);
 
-		if (!InvoiceHelper::isAccessAllowed($itemModel->invoice))
+		if (!PaymentHelper::isAccessAllowed($paymentModel))
 			throw new ForbiddenHttpException;
 
 		$formatter = Yii::$app->formatter;
 
-		$availableSum = $itemModel->invoice->total_paid;
+		$availableSum = $paymentModel->getAvailableLinkSum();
 
-		foreach ($itemModel->invoice->items as $item) {
-			if ($item->id == $itemModel->id)
-				continue;
-
-			$availableSum -= $item->total_paid;
+		// Получаем список счетов, которые можно связать с этим поступлением
+		$invoiceList = [];
+		// Сначала добавляем уже привязанные счета
+		foreach ($paymentModel->invoiceLinks as $link) {
+			$invoiceList[] = [
+				'id'         => $link->invoice->id,
+				'name'       => $link->invoice->name,
+				'total_paid' => $link->invoice->total_paid,
+				'summary'    => $link->invoice->summary,
+				'linked'     => true,
+				'linked_sum' => $link->sum,
+			];
 		}
+		// Далее добавляем те счета, которые можно привязать к этому поступлению
+		$invoices = InvoiceHelper::applyAccessByUser(Invoice::find()->where([
+			'AND',
+			['=', 'contractor_id', $paymentModel->contractor_id],
+			['=', 'is_paid', 0],
+			['not in', 'in', array_keys($invoiceList)],
+		])
+			->orderBy(['created_at' => SORT_DESC])
+		)
+			->all();
 
-		if ($availableSum > $itemModel->summary) {
-			$availableSum = $itemModel->summary;
+		foreach ($invoices as $invoice) {
+			/** @var Invoice $invoice */
+			$invoiceList[] = [
+				'id'         => $invoice->id,
+				'name'       => $invoice->name,
+				'total_paid' => $invoice->total_paid,
+				'summary'    => $invoice->summary,
+				'linked'     => false,
+				'linked_sum' => 0,
+			];
 		}
 
 		$output = [
-			'item'             => $itemModel->attributes,
-			'formattedSummary' => $formatter->asCurrency($itemModel->summary),
-			'availableSum'     => $availableSum,
+			'availableSum' => $availableSum,
+			'payment'      => $paymentModel,
+			'invoiceList'  => $invoiceList,
 		];
 
 		return $output;
