@@ -97,4 +97,16 @@ class Payment extends PaymentBase {
 
 		return $availableSum;
 	}
+
+	/**
+	 * @param integer $invoiceId
+	 *
+	 * @return PaymentLinkToInvoice
+	 */
+	public function getInvoiceLink($invoiceId) {
+		return PaymentLinkToInvoice::findOne([
+			'payment_id' => $this->id,
+			'invoice_id' => $invoiceId,
+		]);
+	}
 }

@@ -53,7 +53,7 @@ a.desc:after {
 }
 
 .contractor-column {
-    width: 120px;
+    width: 150px;
 }
 
 .paid-status-column {
@@ -65,5 +65,5 @@ a.desc:after {
 }
 
 .income-column {
-    width: 200px;
+    width: 250px;
 }

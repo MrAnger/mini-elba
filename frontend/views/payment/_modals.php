@@ -25,23 +25,16 @@ $emptyPaymentLinkModel = new \common\models\PaymentLinkToInvoice();
 			<div class="modal-body">
 				<?php $form = ActiveForm::begin([
 					'enableClientValidation' => false,
-					'enableAjaxValidation'   => true,
-					'validationUrl'          => ['/payment/validate-invoice-link-form'],
-					'action'                 => ['/invoice/invoice-link-form'],
+					'action'                 => ['/payment/invoice-link-form'],
 					'options'                => [
 						'data' => [
-							'payment-id'    => 0,
-							'available-sum' => 0,
-							'payment'       => false,
-							'invoice-list'  => \yii\helpers\Json::encode([]),
+							'payment'      => false,
+							'invoice-list' => \yii\helpers\Json::encode([]),
 						],
 					],
 				]) ?>
 
-				<?= Html::hiddenInput('paymentId', null, [
-					'class' => 'js-payment-id',
-				]) ?>
-
+				<div class="js-payment-description"></div>
 				<div class="js-total-sum-left"></div>
 
 				<table class="table">

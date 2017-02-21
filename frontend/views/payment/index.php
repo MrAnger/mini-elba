@@ -33,6 +33,7 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 	</p>
 
 	<?php $pjax = Pjax::begin([
+		'id'      => 'pjax-payment-list',
 		'timeout' => 8000,
 	]) ?>
 
@@ -71,8 +72,11 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 						foreach ($model->invoiceLinks as $link) {
 							$invoice = $link->invoice;
 
-							$html .= Html::a("$invoice->name - " . $formatter->asCurrency($link->sum), '#', [
+							$html .= Html::a("$invoice->name - " . $formatter->asCurrency($link->sum), ['/payment/get-invoice-link-data', 'paymentId' => $model->id], [
 									'class' => 'js-link-payment-to-invoice',
+									'data'  => [
+										'update-pjax' => '#pjax-payment-list',
+									],
 								]) . "<br>";
 						}
 
@@ -80,6 +84,9 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 					} else {
 						$html .= "<br>" . Html::a('Связать со счётом', ['/payment/get-invoice-link-data', 'paymentId' => $model->id], [
 								'class' => 'btn btn-primary btn-xs js-link-payment-to-invoice',
+								'data'  => [
+									'update-pjax' => '#pjax-payment-list',
+								],
 							]);
 					}
 

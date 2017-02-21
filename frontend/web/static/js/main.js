@@ -172,12 +172,9 @@
                 var $modal = $('#modal-link-payment-to-invoice'),
                     $form = $modal.find('form');
 
-                $form.data('payment-id', response.payment.id);
-                $form.data('available-sum', response.availableSum);
                 $form.data('payment', response.payment);
                 $form.data('invoiceList', response.invoiceList);
-
-                $form.find('.js-payment-id').val(response.payment.id);
+                $form.data('update-pjax', $el.data('update-pjax'));
 
                 $form.yiiActiveForm('resetForm');
 
@@ -189,83 +186,317 @@
 
         function PaymentLinkToInvoiceForm($form) {
             var self = this,
-                availableSum = $form.data('available-sum'),
+                $modal = $form.parents('.modal').eq(0),
                 payment = $form.data('payment'),
+                paymentSum = parseFloat(payment.income),
                 invoiceList = $form.data('invoice-list'),
-                $sumLeft = $form.find('.js-total-sum-left'),
+                $paymentDescriptionHolder = $form.find('.js-payment-description'),
+                $sumLeftHolder = $form.find('.js-total-sum-left'),
                 $invoicesHolder = $form.find('.js-invoices-holder'),
                 $invoiceTemplate = $form.find('.js-invoice-template');
 
             this.printInvoices = function () {
                 $.each(invoiceList, function (index, invoice) {
-                    var $item = $($invoiceTemplate.html());
+                    var $item = $($invoiceTemplate.html()),
+                        $checkBoxInput = $item.find('.js-checked'),
+                        $nameHolder = $item.find('.js-name'),
+                        $sumLeftHolder = $item.find('.js-sum-left'),
+                        $linkedSumInput = $item.find('.js-input-sum'),
+                        $linkedSumFakeHolder = $item.find('.js-fake-input-sum'),
+                        $summaryHolder = $item.find('.js-invoice-summary');
 
+                    // Настраиваем первичное визуальное состояние
                     $item.attr('data-id', invoice.id);
                     $item.data('invoice', invoice);
 
-                    var $checkBox = $item.find('.js-checked');
+                    $checkBoxInput.prop('checked', (invoice.linked) ? true : false);
+                    $nameHolder.html(invoice.name);
 
-                    $checkBox.prop('checked', (invoice.linked) ? true : false);
-                    $item.find('.js-name').html(invoice.name);
-
-                    var sumLeft = parseFloat(invoice.summary) - parseFloat(invoice.total_paid),
-                        $sumLeft = $item.find('.js-sum-left');
-
-                    if (sumLeft > 0) {
-                        $sumLeft.show().find('.value').html("Осталось связать: " + $.format.number(sumLeft, '#,##0.00#'));
-                    } else {
-                        $sumLeft.hide();
-                    }
-
-                    var sumLinked = parseFloat(invoice.linked_sum),
-                        $linkedSumInput = $item.find('.js-input-sum'),
-                        $linkedSumFake = $item.find('.js-fake-input-sum');
-
-                    $linkedSumInput.val(sumLinked);
-                    $linkedSumFake.html($.format.number(sumLinked, '#,##0.00#'));
-
-                    $linkedSumInput.change(function (e) {
-                        $linkedSumFake.html($.format.number(parseFloat($(this).val()), '#,##0.00#'));
-                    });
-
-                    var $summary = $item.find('.js-invoice-summary');
-                    $summary.html($.format.number(parseFloat(invoice.summary), '#,##0.00#'));
-
-                    if ($checkBox.prop('checked')) {
-                        $linkedSumInput.show();
-                        $linkedSumFake.hide();
-                    } else {
-                        $linkedSumInput.hide();
-                        $linkedSumFake.show();
-                    }
-
-                    $checkBox.change(function () {
-                        if ($(this).prop('checked')) {
-                            $linkedSumInput.show();
-                            $linkedSumFake.hide();
-                        } else {
-                            $linkedSumInput.hide();
-                            $linkedSumFake.show();
-                        }
-                    });
+                    // Настраиваем первичное отображения инпутов линкованной суммы
+                    initLinkedSumInput();
+                    // Отображаем оставшуюся сумму для связки
+                    showInvoiceSumLeft();
+                    // Отображаем общую сумму счета
+                    $summaryHolder.html($.format.number(parseFloat(invoice.summary), '#,##0.00#'));
+                    // Настраиваем поведение чекбокса
+                    initCheckboxInput();
 
                     $invoicesHolder.append($item);
+
+                    function getInvoiceSumLeft(withoutLinkedSumInputValue) {
+                        var invoiceSummary = parseFloat(invoice.summary),
+                            invoiceTotalPaid = parseFloat(invoice.total_paid),
+                            linkedSum = getInputLinkedSumValue();
+
+                        if (withoutLinkedSumInputValue === undefined)
+                            withoutLinkedSumInputValue = false;
+
+                        // Корректируем invoiceTotalPaid, если в этой сумме фигурирует линковка из данного поступления
+                        if (invoice.linked) {
+                            invoiceTotalPaid -= parseFloat(invoice.linked_sum);
+                        }
+
+                        if (withoutLinkedSumInputValue) {
+                            return invoiceSummary - invoiceTotalPaid;
+                        } else {
+                            return invoiceSummary - invoiceTotalPaid - linkedSum;
+                        }
+                    }
+
+                    function showInvoiceSumLeft() {
+                        var sumLeft = getInvoiceSumLeft();
+
+                        if (sumLeft > 0) {
+                            $sumLeftHolder.removeClass('text-success')
+                                .addClass('text-danger')
+                                .find('.value').html("Осталось связать: " + $.format.number(sumLeft, '#,##0.00#'));
+                        } else if (sumLeft < 0) {
+                            $sumLeftHolder.removeClass('text-success')
+                                .addClass('text-danger')
+                                .find('.value').html("Переизбыток: " + $.format.number(sumLeft, '#,##0.00#'));
+                        } else {
+                            $sumLeftHolder.removeClass('text-danger')
+                                .addClass('text-success')
+                                .find('.value').html("Вся сумма связана");
+                        }
+                    }
+
+                    function initLinkedSumInput() {
+                        var sumLinked = parseFloat(invoice.linked_sum);
+
+                        $linkedSumInput.val(sumLinked.toFixed(2));
+                        $linkedSumFakeHolder.html($.format.number(sumLinked, '#,##0.00#'));
+
+                        // Разрешаем ввод в инпут только цифр и точки
+                        $linkedSumInput.on('keyup change', function (e) {
+                            $linkedSumInput.val($linkedSumInput.val().replace(/[^0-9\.]/ig, ''));
+                        });
+
+                        // Вместо пустого значения прописываем 0
+                        $linkedSumInput.on('change', function (e) {
+                            if ($linkedSumInput.val().length == 0)
+                                $linkedSumInput.val((0).toFixed(2));
+                        });
+
+                        // Связываем значение инпута и фейкового элемента
+                        $linkedSumInput.change(function (e) {
+                            var value = parseFloat($(this).val());
+
+                            if (!value)
+                                value = 0;
+
+                            $linkedSumFakeHolder.html($.format.number(value, '#,##0.00#'));
+                        });
+
+                        // Вызываем пересчет отображаемых сумм остатков
+                        $linkedSumInput.on('keyup change', function (e) {
+                            showInvoiceSumLeft();
+                            self.showPaymentSumLeft();
+                        });
+
+                        // Задаём начальные параметры видимости исходя из состояния чекбокса
+                        if ($checkBoxInput.prop('checked')) {
+                            $linkedSumInput.show();
+                            $linkedSumFakeHolder.hide();
+                        } else {
+                            $linkedSumInput.hide();
+                            $linkedSumFakeHolder.show();
+                        }
+                    }
+
+                    function initCheckboxInput() {
+                        $checkBoxInput.change(function () {
+                            if ($(this).prop('checked')) {
+                                $linkedSumInput.val(getAvailableLinkSum().toFixed(2)).change();
+
+                                $linkedSumInput.show();
+                                $linkedSumFakeHolder.hide();
+                            } else {
+                                $linkedSumInput.hide();
+                                $linkedSumFakeHolder.show();
+
+                                $linkedSumInput.val(0).change();
+                            }
+                        });
+                    }
+
+                    function getInputLinkedSumValue() {
+                        var value = parseFloat($linkedSumInput.val());
+
+                        if (!value)
+                            return 0;
+
+                        return value;
+                    }
+
+                    function getAvailableLinkSum() {
+                        var paymentSumLeft = self.getPaymentSumLeft() + getInputLinkedSumValue(),
+                            invoiceSumLeft = getInvoiceSumLeft(true);
+
+                        if (paymentSumLeft >= invoiceSumLeft) {
+                            return invoiceSumLeft;
+                        } else {
+                            return paymentSumLeft;
+                        }
+                    }
                 });
             };
 
-            this.showSumLeft = function () {
-                if (availableSum == 0) {
-                    $sumLeft.html("<div class='text-success'>Связанна вся сумма</div>")
+            this.getPaymentSumLeft = function () {
+                var output = paymentSum;
+
+                $invoicesHolder.find('.item').each(function (key, el) {
+                    var $item = $(el),
+                        $checkBoxInput = $item.find('.js-checked'),
+                        $linkedSumInput = $item.find('.js-input-sum');
+
+                    if ($checkBoxInput.prop('checked')) {
+                        var value = parseFloat($linkedSumInput.val());
+
+                        if (value) {
+                            output -= value;
+                        }
+                    }
+                });
+
+                return output;
+            };
+
+            this.showPaymentSumLeft = function () {
+                var value = self.getPaymentSumLeft();
+
+                if (value > 0) {
+                    $sumLeftHolder.html("<div class='text-warning'>Осталось связать: " + $.format.number(value, '#,##0.00#') + "</div>");
+                } else if (value == 0) {
+                    $sumLeftHolder.html("<div class='text-success'>Связана вся сумма</div>")
                 } else {
-                    $sumLeft.html("<div class='text-warning'>Осталось связать: " + $.format.number(parseFloat(availableSum), '#,##0.00#') + "</div>");
+                    $sumLeftHolder.html("<div class='text-danger'>Переизбыток: " + $.format.number(value, '#,##0.00#') + "</div>");
                 }
             };
 
-            this._init = function () {
-                $invoicesHolder.html('');
+            this.validateLinkedInvoice = function (invoiceId, linkedSum) {
+                invoiceId = parseInt(invoiceId);
+                linkedSum = parseFloat(linkedSum);
 
-                self.showSumLeft();
+                var output = {state: true, errors: []};
+
+                // Ищем необходимый счет в списке
+                var invoice = false;
+                $.each(invoiceList, function (index, item) {
+                    var itemId = parseInt(item.id);
+
+                    if (itemId == invoiceId) {
+                        invoice = item;
+                    }
+                });
+
+                if (invoice === false) {
+                    output.state = false;
+                    output.errors.push('Неверный ID счета: ' + invoiceId);
+
+                    return output;
+                }
+
+                function getInvoiceSumLeft() {
+                    var invoiceSummary = parseFloat(invoice.summary),
+                        invoiceTotalPaid = parseFloat(invoice.total_paid);
+
+                    // Корректируем invoiceTotalPaid, если в этой сумме фигурирует линковка из данного поступления
+                    if (invoice.linked) {
+                        invoiceTotalPaid -= parseFloat(invoice.linked_sum);
+                    }
+
+                    return invoiceSummary - invoiceTotalPaid;
+                }
+
+                if (linkedSum > getInvoiceSumLeft()) {
+                    output.state = false;
+                    output.errors.push('Указана слишком большая сумма привязки для счета: ' + invoice.name);
+                }
+
+                return output;
+            };
+
+            this.submitForm = function () {
+                var postData = {
+                    paymentId: payment.id,
+                    linkedInvoices: {}
+                };
+                // Сначала валидируем значения формы
+                var errors = [];
+
+                if (self.getPaymentSumLeft() < 0) {
+                    errors.push('Общая сумма связки со счетами превышает объем средств поступления.');
+                }
+
+                $invoicesHolder.find('.item').each(function (index, el) {
+                    var $item = $(el),
+                        itemId = $item.data('id'),
+                        itemValue = $item.find('.js-input-sum').val(),
+                        $checkBoxInput = $item.find('.js-checked');
+
+                    if (!$checkBoxInput.prop('checked'))
+                        return false;
+
+                    postData.linkedInvoices[itemId] = itemValue;
+
+                    var validateResult = self.validateLinkedInvoice(itemId, itemValue);
+
+                    if (!validateResult.state) {
+                        $.each(validateResult.errors, function (index, error) {
+                            errors.push(error);
+                        });
+                    }
+                });
+
+                if (errors.length > 0) {
+                    alert(errors.join("\n"));
+                    return false;
+                }
+
+                // Если ошибок нет, то отправляем данные на сервер
+                $.post($form.attr('action'), postData, function (response) {
+                    if (response.state) {
+                        // Все прошло успешно, проверяем, необходимо ли обновить какой либо pjax контейнер и закрываем модальное окно
+                        var updatePjax = $form.data('update-pjax');
+                        if (updatePjax && $(updatePjax).length > 0) {
+                            $.pjax({
+                                url: window.location.href,
+                                container: $(updatePjax),
+                                scrollTo: false,
+                                timeout: 8000
+                            });
+                        }
+
+                        $modal.modal('hide');
+                    } else {
+                        alert(response.errors.join("\n"));
+                    }
+                }).error(function () {
+                    alert('Произошла ошибка при отправке запроса на сервер.');
+                });
+            };
+
+            this._init = function () {
+                // Очищаем ранее сгенерированные счета
+                $invoicesHolder.html('');
+                // Очищаем старое описание платежа
+                $paymentDescriptionHolder.html('');
+                // Убираем старые обработчики submit формы
+                $form.unbind('beforeSubmit');
+
+                // Отображаем описание платежа
+                $paymentDescriptionHolder.html(payment.description);
+                // Генерируем счета для связки
                 self.printInvoices();
+                // Отображаем оставшуюся сумму для связывания
+                self.showPaymentSumLeft();
+                // Привязываем обработчик submit формы
+                $form.on('beforeSubmit', function (e) {
+                    self.submitForm();
+
+                    return false;
+                });
             };
 
             self._init();
