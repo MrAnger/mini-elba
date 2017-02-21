@@ -28,9 +28,16 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 ?>
 <div>
 
-	<p class="text-right">
+	<div class="text-right" style="margin-bottom: 10px;">
+
+		<div class="file-upload" data-upload-url="<?= Url::to(['/payment/import-from-file']) ?>"
+			 data-callback-name="importCallback">
+			<button class="btn btn-primary">Загрузить из файла (1С)</button>
+			<input name="file" type="file">
+		</div>
+
 		<?= Html::a(Yii::t('app.actions', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
-	</p>
+	</div>
 
 	<?php $pjax = Pjax::begin([
 		'id'      => 'pjax-payment-list',
@@ -170,3 +177,12 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 
 	<?= $this->render('_modals') ?>
 </div>
+<script type="text/javascript">
+	function importCallback(response) {
+		if (response.state) {
+			location.reload();
+		} else {
+			alert(response.errors.join("\n"));
+		}
+	}
+</script>

@@ -42,17 +42,12 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 	</div>
 
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-6">
 			<?= $form->field($model, 'income')
 				->textInput() ?>
 		</div>
 
-		<div class="col-md-4">
-			<?= $form->field($model, 'operation_code')
-				->textInput() ?>
-		</div>
-
-		<div class="col-md-4">
+		<div class="col-md-6">
 			<?= $form->field($model, 'document_number')
 				->textInput() ?>
 		</div>

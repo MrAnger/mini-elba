@@ -67,3 +67,16 @@ a.desc:after {
 .income-column {
     width: 250px;
 }
+
+/* File Upload Button */
+.file-upload {
+    display: inline;
+    position: relative;
+    overflow: hidden;
+}
+
+.file-upload input[type=file] {
+    position: absolute;
+    top: 0;
+    visibility: hidden
+}

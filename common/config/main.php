@@ -84,8 +84,11 @@ return [
 			'clients' => [],
 		],
 
-		'userBuddy' => [
+		'userBuddy'       => [
 			'class' => 'common\components\UserBuddy',
+		],
+		'paymentParser1c' => [
+			'class' => 'common\components\PaymentParser1c',
 		],
 	],
 ];

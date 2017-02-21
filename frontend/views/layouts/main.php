@@ -13,6 +13,7 @@ use yii\helpers\Html;
 BowerAsset::register($this);
 ThemeAsset::register($this);
 FrontendAsset::register($this);
+
 ?>
 <?php $this->beginContent('@app/views/layouts/plain.php') ?>
 <header>
@@ -31,6 +32,7 @@ FrontendAsset::register($this);
 			</div>
 			<div class="contentpanel site-body">
 				<?= \common\widgets\Alert::widget() ?>
+
 				<?= $content ?>
 			</div>
 		</div>

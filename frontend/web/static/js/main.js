@@ -501,5 +501,47 @@
 
             self._init();
         }
+
+        // File Upload Button
+        $('.file-upload button').click(function (e) {
+            e.preventDefault();
+
+            var $fileUpload = $(this).parents('.file-upload');
+
+            $fileUpload.find('input[type=file]').click();
+        });
+
+        $(document).on('change', '.file-upload input[type=file]', function (e) {
+            var $input = $(this),
+                $fileUpload = $input.parents('.file-upload'),
+                uploadUrl = $fileUpload.data('upload-url'),
+                callbackName = $fileUpload.data('callback-name');
+
+            if (uploadUrl) {
+                var formData = new FormData();
+                formData.append($input.attr('name'), $input[0].files[0]);
+
+                $.ajax({
+                    url: uploadUrl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (callbackName && window[callbackName]) {
+                            window[callbackName](response);
+                        }
+                    },
+                    error: function () {
+                        alert('Произошла ошибка при выполнении запроса.');
+                    },
+                    complete: function () {
+                        var $newInput = $("<input type='file'>").attr('name', $input.attr('name'));
+
+                        $input.replaceWith($newInput);
+                    }
+                });
+            }
+        });
     });
 })(jQuery);

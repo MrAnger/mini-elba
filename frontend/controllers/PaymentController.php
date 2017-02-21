@@ -1,22 +1,28 @@
 <?php
 namespace frontend\controllers;
 
+use common\components\PaymentParser1c;
 use common\helpers\InvoiceHelper;
 use common\helpers\PaymentHelper;
+use common\models\Contractor;
 use common\models\Invoice;
 use common\models\InvoiceItem;
 use common\models\Payment;
+use common\models\PaymentData;
 use common\models\PaymentLinkToInvoice;
+use common\models\User;
 use frontend\models\PaymentSearch;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
+use yii\helpers\FileHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
+use yii\web\UploadedFile;
 
 /**
  * @author MrAnger
@@ -340,6 +346,89 @@ class PaymentController extends BaseController {
 						$invoiceTotalPaid = 0;
 				}
 			}
+		}
+	}
+
+	public function actionImportFromFile() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$request = Yii::$app->request;
+		/** @var User $user */
+		$user = Yii::$app->user->identity;
+
+		$formatter = Yii::$app->formatter;
+
+		$output = [
+			'state'  => true,
+			'errors' => [],
+		];
+
+		$uploadedFile = UploadedFile::getInstanceByName('file');
+
+		/** @var PaymentParser1c $parser */
+		$parser = Yii::$app->get('paymentParser1c');
+
+		$parseResult = $parser->parse($uploadedFile->tempName);
+
+		// Получаем только поступления для текущего пользователя
+		/** @var PaymentData[] $incomes */
+		$incomes = [];
+		foreach ($parseResult as $item) {
+			if ($item->recipient_inn == $user->profile->inn) {
+				$incomes[] = $item;
+			}
+		}
+
+		// Добавляем спарсенные поступления в БД
+		$transaction = Yii::$app->db->beginTransaction();
+
+		$countTotal = count($incomes);
+		$countSuccessImporting = 0;
+
+		try {
+			foreach ($incomes as $income) {
+				if (empty($income->payer_inn))
+					continue;
+
+				// Сначала пробуем найти контрагента по указанному ИНН
+				/** @var Contractor $contractor */
+				$contractor = Contractor::findOne(['user_id' => $user->id, 'inn' => $income->payer_inn]);
+
+				if ($contractor === null) {
+					$contractor = new Contractor([
+						'user_id' => $user->id,
+						'inn'     => $income->payer_inn,
+						'name'    => ((!empty($income->payer_name1)) ? $income->payer_name1 : $income->payer_name),
+					]);
+
+					if (!$contractor->save()) {
+						continue;
+					}
+				}
+
+				$payment = new Payment([
+					'user_id'         => $user->id,
+					'contractor_id'   => $contractor->id,
+					'date'            => date_format(date_create_from_format("d.m.Y", $income->date), "Y-m-d"),
+					'document_number' => $income->document_number,
+					'income'          => $income->income,
+					'description'     => $income->description,
+				]);
+
+				if ($payment->save()) {
+					$countSuccessImporting++;
+				}
+			}
+
+			$transaction->commit();
+
+			Yii::$app->session->addFlash('success', "Импорт завершен. Поступлений прочитано: " . $formatter->asInteger($countTotal) . ". Успешно импортированно: " . $formatter->asInteger($countSuccessImporting) . ".");
+
+			return $output;
+		} catch (\Exception $e) {
+			$transaction->rollBack();
+
+			throw $e;
 		}
 	}
 

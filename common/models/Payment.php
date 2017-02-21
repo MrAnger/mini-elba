@@ -33,8 +33,8 @@ class Payment extends PaymentBase {
 	public function rules() {
 		return array_merge(parent::rules(), [
 			[['income'], 'required'],
-			[['description'], 'trim'],
-			[['description'], 'default'],
+			[['description', 'document_number'], 'trim'],
+			[['description', 'document_number'], 'default'],
 		]);
 	}
 
@@ -91,6 +91,9 @@ class Payment extends PaymentBase {
 		]);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getName() {
 		$formatter = Yii::$app->formatter;
 

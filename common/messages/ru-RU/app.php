@@ -22,7 +22,6 @@ return [
 	'Date'            => 'Дата',
 	'Income'          => 'Поступление',
 	'Outcome'         => 'Списание',
-	'Operation Code'  => 'Код операции',
 	'Document Number' => 'Номер документа',
 	'Description'     => 'Описание',
 	'Created At'      => 'Создан',
