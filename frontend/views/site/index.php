@@ -39,7 +39,7 @@ $formatter = Yii::$app->formatter;
 										<?= Yii::t('app', '{delta, plural, =1{1 invoice} other{# invoices}}', ['delta' => $debtorData['invoiceCount']]); ?>
 									</a>
 								</td>
-								<td class="text-center">
+								<td class="text-center text-danger">
 									<?= $formatter->asCurrency($debtorData['debtorSum']) ?>
 								</td>
 							</tr>
