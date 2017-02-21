@@ -80,7 +80,7 @@ $formatter = Yii::$app->formatter;
 									</a>
 								</td>
 								<td class="text-center">
-									<a href="<?= $statItem['invoicePaidListUrl'] ?>">
+									<a href="<?= $statItem['paymentListUrl'] ?>">
 										<i class="text-success" title="Оплачено">
 											<?= $formatter->asCurrency($statItem['total_paid']) ?>
 										</i>

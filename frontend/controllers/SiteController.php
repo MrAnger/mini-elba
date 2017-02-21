@@ -2,7 +2,10 @@
 namespace frontend\controllers;
 
 use common\helpers\InvoiceHelper;
+use common\helpers\PaymentHelper;
+use common\models\Contractor;
 use common\models\Invoice;
+use common\models\Payment;
 use Yii;
 use yii\helpers\Url;
 
@@ -62,26 +65,32 @@ class SiteController extends BaseController {
 		}
 
 		// Подготавливаем суммарную статистику за все время
-		$invoices = InvoiceHelper::applyAccessByUser(Invoice::find())->all();
+		$payments = PaymentHelper::applyAccessByUser(Payment::find())->all();
 
 		$statList = [];
 
-		foreach ($invoices as $invoice) {
-			/** @var Invoice $invoice */
-			if (!isset($statList[$invoice->contractor_id])) {
-				$statList[$invoice->contractor_id] = [
-					'contractor'            => $invoice->contractor,
-					'invoiceCount'          => 0,
-					'summary'               => 0,
-					'total_paid'            => 0,
-					'invoiceListUrl'        => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id]),
-					'invoicePaidListUrl'    => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id, 'is_paid' => 1]),
+		foreach ($payments as $payment) {
+			/** @var Payment $payment */
+			if (!isset($statList[$payment->contractor_id])) {
+				$statList[$payment->contractor_id] = [
+					'contractor'     => $payment->contractor,
+					'invoiceCount'   => 0,
+					'summary'        => 0,
+					'total_paid'     => 0,
+					'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $payment->contractor->id]),
+					'paymentListUrl' => Url::to(['/payment/index', 'contractor_id' => $payment->contractor->id]),
 				];
 			}
 
-			$statList[$invoice->contractor_id]['invoiceCount']++;
-			$statList[$invoice->contractor_id]['summary'] += $invoice->summary;
-			$statList[$invoice->contractor_id]['total_paid'] += $invoice->total_paid;
+			$statList[$payment->contractor_id]['total_paid'] += $payment->income;
+		}
+
+		foreach ($statList as $statItem) {
+			/** @var Contractor $contractor */
+			$contractor = $statItem['contractor'];
+
+			$statList[$contractor->id]['invoiceCount'] = $contractor->getInvoices()->count();
+			$statList[$contractor->id]['summary'] += $contractor->getInvoices()->sum('summary');
 		}
 
 		return $this->render('index', [
