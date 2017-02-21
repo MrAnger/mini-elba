@@ -11,7 +11,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 
-$this->title = Yii::t('app.actions', 'Viewing');
+$this->title = $model->name;
 
 $this->params['breadcrumbs'] = [
 	[
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'] = [
 		'label' => $model->name,
 		'url'   => ['view', 'id' => $model->id],
 	],
-	$this->title,
+	Yii::t('app.actions', 'Viewing'),
 ];
 
 $formatter = Yii::$app->formatter;
