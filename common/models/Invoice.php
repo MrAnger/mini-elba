@@ -10,6 +10,7 @@ use yii\db\Expression;
  * @property Contractor $contractor
  * @property User $user
  * @property InvoiceItem[] $items
+ * @property Payment[] $payments
  */
 class Invoice extends InvoiceBase {
 	/**
@@ -53,5 +54,13 @@ class Invoice extends InvoiceBase {
 	 */
 	public function getItems() {
 		return $this->hasMany(InvoiceItem::className(), ['invoice_id' => 'id']);
+	}
+
+	/**
+	 * @return \yii\db\ActiveQuery
+	 */
+	public function getPayments() {
+		return $this->hasMany(Payment::className(), ['id' => 'payment_id'])
+			->viaTable(PaymentLinkToInvoice::tableName(), ['invoice_id' => 'id']);
 	}
 }

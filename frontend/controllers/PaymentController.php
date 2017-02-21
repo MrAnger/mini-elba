@@ -14,6 +14,7 @@ use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
+use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
@@ -32,7 +33,7 @@ class PaymentController extends BaseController {
 			'date' => SORT_DESC,
 		];
 
-		$dataProvider->pagination->pageSize = 50;
+		$dataProvider->pagination->pageSize = 30;
 
 		return $this->render('index', [
 			'searchModel'  => $searchModel,
@@ -94,11 +95,15 @@ class PaymentController extends BaseController {
 		if (!PaymentHelper::isAccessAllowed($model))
 			throw new ForbiddenHttpException;
 
-		$model->delete();
+		if (PaymentHelper::isAvailableDelete($model)) {
+			$model->delete();
 
-		Yii::$app->session->addFlash('success', 'Поступление успешно удалено.');
+			Yii::$app->session->addFlash('success', 'Поступление успешно удалено.');
 
-		return $this->redirect(Yii::$app->request->referrer);
+			return $this->redirect(Yii::$app->request->referrer);
+		}
+
+		throw new MethodNotAllowedHttpException;
 	}
 
 	public function actionGetInvoiceLinkData($paymentId) {

@@ -436,7 +436,7 @@
                         $checkBoxInput = $item.find('.js-checked');
 
                     if (!$checkBoxInput.prop('checked'))
-                        return false;
+                        return true;
 
                     postData.linkedInvoices[itemId] = itemValue;
 

@@ -5,6 +5,7 @@
  * @var \yii\data\ActiveDataProvider $dataProvider
  */
 
+use common\helpers\ContractorHelper;
 use common\models\Contractor;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -43,8 +44,13 @@ $this->params['breadcrumbs'] = [
 				},
 			],
 			[
-				'class'    => 'yii\grid\ActionColumn',
-				'template' => '{update} {delete}',
+				'class'          => 'yii\grid\ActionColumn',
+				'template'       => '{update} {delete}',
+				'visibleButtons' => [
+					'delete' => function (Contractor $model, $key, $index) {
+						return ContractorHelper::isAvailableDelete($model);
+					},
+				],
 			],
 		],
 	]) ?>

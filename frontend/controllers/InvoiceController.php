@@ -11,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
+use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -28,7 +29,7 @@ class InvoiceController extends BaseController {
 			'created_at' => SORT_DESC,
 		];
 
-		$dataProvider->pagination->pageSize = 50;
+		$dataProvider->pagination->pageSize = 30;
 
 		return $this->render('index', [
 			'searchModel'  => $searchModel,
@@ -169,11 +170,15 @@ class InvoiceController extends BaseController {
 		if (!InvoiceHelper::isAccessAllowed($model))
 			throw new ForbiddenHttpException;
 
-		$model->delete();
+		if (InvoiceHelper::isAvailableDelete($model)) {
+			$model->delete();
 
-		Yii::$app->session->addFlash('success', 'Счёт успешно удален.');
+			Yii::$app->session->addFlash('success', 'Счёт успешно удален.');
 
-		return $this->redirect(Yii::$app->request->referrer);
+			return $this->redirect(Yii::$app->request->referrer);
+		}
+
+		throw new MethodNotAllowedHttpException;
 	}
 
 	public function actionGetItemPaid($itemId) {

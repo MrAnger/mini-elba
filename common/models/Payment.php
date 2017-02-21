@@ -12,6 +12,7 @@ use yii\db\Expression;
  * @property PaymentLinkToInvoice[] $invoiceLinks
  * @property Invoice[] $invoices
  * @property boolean $isLinkedComplete
+ * @property string $name
  */
 class Payment extends PaymentBase {
 	/**
@@ -79,26 +80,6 @@ class Payment extends PaymentBase {
 	}
 
 	/**
-	 * @return float
-	 */
-	public function getAvailableLinkSum() {
-		if ($this->isNewRecord)
-			return 0;
-
-		$availableSum = $this->income;
-
-		foreach ($this->invoiceLinks as $link) {
-			$availableSum -= $link->sum;
-		}
-
-		if ($availableSum < 0) {
-			$availableSum = 0;
-		}
-
-		return $availableSum;
-	}
-
-	/**
 	 * @param integer $invoiceId
 	 *
 	 * @return PaymentLinkToInvoice
@@ -108,5 +89,11 @@ class Payment extends PaymentBase {
 			'payment_id' => $this->id,
 			'invoice_id' => $invoiceId,
 		]);
+	}
+
+	public function getName() {
+		$formatter = Yii::$app->formatter;
+
+		return "Поступление на " . $formatter->asCurrency($this->income) . " " . $formatter->asDate($this->date) . " от " . $this->contractor->name;
 	}
 }

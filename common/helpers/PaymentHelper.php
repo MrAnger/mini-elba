@@ -44,4 +44,13 @@ class PaymentHelper extends Model {
 
 		return $sum;
 	}
+
+	/**
+	 * @param Payment $model
+	 *
+	 * @return boolean
+	 */
+	public static function isAvailableDelete($model) {
+		return ($model->getInvoiceLinks()->count() == 0);
+	}
 }

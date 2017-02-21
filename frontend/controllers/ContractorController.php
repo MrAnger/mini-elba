@@ -6,6 +6,7 @@ use common\models\Contractor;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\ForbiddenHttpException;
+use yii\web\MethodNotAllowedHttpException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -20,6 +21,8 @@ class ContractorController extends BaseController {
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
+
+		$dataProvider->pagination->pageSize = 30;
 
 		$dataProvider->sort->defaultOrder = [
 			'name' => SORT_ASC,
@@ -73,11 +76,15 @@ class ContractorController extends BaseController {
 		if (!ContractorHelper::isAccessAllowed($model))
 			throw new ForbiddenHttpException;
 
-		$model->delete();
+		if (ContractorHelper::isAvailableDelete($model)) {
+			$model->delete();
 
-		Yii::$app->session->addFlash('success', 'Контрагент успешно удален.');
+			Yii::$app->session->addFlash('success', 'Контрагент успешно удален.');
 
-		return $this->redirect(Yii::$app->request->referrer);
+			return $this->redirect(Yii::$app->request->referrer);
+		}
+
+		throw new MethodNotAllowedHttpException;
 	}
 
 	/**

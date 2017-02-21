@@ -146,16 +146,21 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 				],
 			],
 			[
-				'class'         => 'yii\grid\ActionColumn',
-				'template'      => '{view} {update} {delete}',
-				'filterOptions' => [
+				'class'          => 'yii\grid\ActionColumn',
+				'template'       => '{view} {update} {delete}',
+				'filterOptions'  => [
 					'class' => 'action-column',
 				],
-				'headerOptions' => [
+				'headerOptions'  => [
 					'class' => 'action-column',
 				],
-				'options'       => [
+				'options'        => [
 					'class' => 'action-column',
+				],
+				'visibleButtons' => [
+					'delete' => function (Payment $model, $key, $index) {
+						return PaymentHelper::isAvailableDelete($model);
+					},
 				],
 			],
 		],

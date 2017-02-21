@@ -29,4 +29,13 @@ class InvoiceHelper extends Model {
 	public static function isAccessAllowed($model) {
 		return $model->user_id == Yii::$app->user->id;
 	}
+
+	/**
+	 * @param Invoice $model
+	 *
+	 * @return boolean
+	 */
+	public static function isAvailableDelete($model) {
+		return ($model->getPayments()->count() == 0);
+	}
 }

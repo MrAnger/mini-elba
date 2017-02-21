@@ -36,23 +36,44 @@ $debtString = ($debts) ? "<br><span class='text-danger'>Задолженност
 		<?= Html::a(Yii::t('app.actions', 'Edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-warning']) ?>
 	</p>
 
-	<?= DetailView::widget([
-		'model'      => $model,
-		'attributes' => [
-			'name',
-			[
-				'attribute' => 'contractor_id',
-				'value'     => $model->contractor->name,
-			],
-			[
-				'label'  => 'Баланс',
-				'format' => 'raw',
-				'value'  => "<i class='" . (($model->is_paid) ? 'text-success' : 'text-danger') . "'>" . $formatter->asCurrency($model->total_paid) . "</i> / <b>" . $formatter->asCurrency($model->summary) . "</b>$debtString",
-			],
-			'created_at:datetime',
-			'updated_at:datetime',
-		],
-	]) ?>
+	<div class="row">
+		<div class="col-md-6">
+			<?= DetailView::widget([
+				'model'      => $model,
+				'attributes' => [
+					'name',
+					[
+						'attribute' => 'contractor_id',
+						'value'     => $model->contractor->name,
+					],
+					[
+						'label'  => 'Баланс',
+						'format' => 'raw',
+						'value'  => "<i class='" . (($model->is_paid) ? 'text-success' : 'text-danger') . "'>" . $formatter->asCurrency($model->total_paid) . "</i> / <b>" . $formatter->asCurrency($model->summary) . "</b>$debtString",
+					],
+					'created_at:datetime',
+					'updated_at:datetime',
+				],
+			]) ?>
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<b style="font-size: large;">Связанные поступления</b>
+				</div>
+				<div class="panel-body">
+					<?php if (count($model->payments) > 0): ?>
+						<?php foreach ($model->payments as $payment): ?>
+							<?php $link = $payment->getInvoiceLink($model->id); ?>
+							<?= Html::a("[ " . $formatter->asCurrency($link->sum) . " ] - " . $payment->name, ['/payment/view', 'id' => $payment->id]) . "<br>" ?>
+						<?php endforeach; ?>
+					<?php else: ?>
+						<p>С данным счетом не связано ни одного поступления :(</p>
+					<?php endif; ?>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<?php if ($model->comment !== null): ?>
 		<div>
