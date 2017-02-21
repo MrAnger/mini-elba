@@ -5,8 +5,8 @@ return [
 		'db'     => [
 			'class'    => 'yii\db\Connection',
 			'dsn'      => 'mysql:host=localhost;dbname=mini-elba',
-			'username' => 'root',
-			'password' => '',
+			'username' => 'mini-elba',
+			'password' => '66FifuqeKavA',
 			'charset'  => 'utf8',
 		],
 		'mailer' => [
