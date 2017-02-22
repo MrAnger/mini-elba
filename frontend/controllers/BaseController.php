@@ -56,13 +56,15 @@ abstract class BaseController extends Controller {
 	public function beforeAction($action) {
 		$result = parent::beforeAction($action);
 
-		/** @var User $user */
-		$user = Yii::$app->user->identity;
+		if (!Yii::$app->user->isGuest) {
+			/** @var User $user */
+			$user = Yii::$app->user->identity;
 
-		if ($user->profile->inn === null) {
-			$profileUrl = Url::to(['/user/settings/profile'], true);
+			if ($user->profile->inn === null) {
+				$profileUrl = Url::to(['/user/settings/profile'], true);
 
-			Yii::$app->session->addFlash('danger', 'Не указан ИНН! Пожалуйста, укажите ИНН в настройках вашего профиля. ' . Html::a($profileUrl, $profileUrl));
+				Yii::$app->session->addFlash('danger', 'Не указан ИНН! Пожалуйста, укажите ИНН в настройках вашего профиля. ' . Html::a($profileUrl, $profileUrl));
+			}
 		}
 
 		return $result;
