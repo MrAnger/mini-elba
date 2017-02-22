@@ -506,9 +506,16 @@
         $('.file-upload button').click(function (e) {
             e.preventDefault();
 
-            var $fileUpload = $(this).parents('.file-upload');
+            var $fileUpload = $(this).parents('.file-upload'),
+                uploadConfirm = $fileUpload.data('upload-confirm');
 
-            $fileUpload.find('input[type=file]').click();
+            if (uploadConfirm) {
+                if (confirm(uploadConfirm)) {
+                    $fileUpload.find('input[type=file]').click();
+                }
+            } else {
+                $fileUpload.find('input[type=file]').click();
+            }
         });
 
         $(document).on('change', '.file-upload input[type=file]', function (e) {

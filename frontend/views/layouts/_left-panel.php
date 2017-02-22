@@ -55,6 +55,25 @@ $roleList = $userBuddy->getTranslatedRoleListForUser($user->id)
 	<div class="media-body">
 		<h4 class="media-heading"><b><?= $userIdentity->displayName ?></b><br/><?= $userIdentity->email ?></h4>
 		<small class="text-muted"><?= implode(", ", $roleList) ?></small>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="file-upload" data-upload-url="<?= Url::to(['/account-data/import']) ?>"
+					 data-callback-name="accountDataImportCallback"
+					 data-upload-confirm="Все ваши данные удаляться и будут заменены данными из файла импорта. Продолжить?"
+					 style="display: block;">
+					<button class="btn btn-warning btn-xs" style="width: 100%;">Импорт</button>
+					<input name="file" type="file">
+				</div>
+			</div>
+			<div class="col-md-6">
+				<?= Html::a('Экспорт', ['/account-data/export'], [
+					'class'               => 'btn btn-success btn-xs js-export',
+					'style'               => 'display: block;',
+					'data-export-confirm' => 'Все ваши данные будут сохранены в файл. Продолжить?',
+				]) ?>
+			</div>
+		</div>
 	</div>
 </div>
 <!-- media -->
@@ -102,3 +121,20 @@ $roleList = $userBuddy->getTranslatedRoleListForUser($user->id)
 		</li>
 	<?php endforeach ?>
 </ul>
+<script type="text/javascript">
+	function accountDataImportCallback(response) {
+		if (response.state) {
+			location.reload();
+		} else {
+			alert(response.errors.join("\n"));
+		}
+	}
+
+	function accountDataExportCallback(response) {
+		if (response.state) {
+			location.reload();
+		} else {
+			alert(response.errors.join("\n"));
+		}
+	}
+</script>
