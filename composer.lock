@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "69dba8a716b9f239855e6beb68dddd6f",
-    "content-hash": "024e6e58f11f9eab166dcec4af2b0377",
+    "hash": "9e1ce5dfd78fae52ec24719a5954e780",
+    "content-hash": "6504a067ba6f6628271a93530f5a180f",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -498,17 +498,63 @@
             "time": "2015-07-31 15:11:09"
         },
         {
-            "name": "kartik-v/bootstrap-fileinput",
-            "version": "v4.3.7",
+            "name": "insolita/yii2-migration-generator",
+            "version": "2.2.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
-                "reference": "5977b3cbf2f0010b54ebad6b7e52d1ad62d19c3e"
+                "url": "https://github.com/Insolita/yii2-migrik.git",
+                "reference": "b1d5dfaa8cd7edd1407ef057d62bd4f0efd91d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/5977b3cbf2f0010b54ebad6b7e52d1ad62d19c3e",
-                "reference": "5977b3cbf2f0010b54ebad6b7e52d1ad62d19c3e",
+                "url": "https://api.github.com/repos/Insolita/yii2-migrik/zipball/b1d5dfaa8cd7edd1407ef057d62bd4f0efd91d43",
+                "reference": "b1d5dfaa8cd7edd1407ef057d62bd4f0efd91d43",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "require-dev": {
+                "yiisoft/yii2-gii": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "bootstrap": "insolita\\migrik\\Bootstrap"
+            },
+            "autoload": {
+                "psr-4": {
+                    "insolita\\migrik\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "insolita",
+                    "email": "donnainsolita@gmail.com"
+                }
+            ],
+            "description": "Set of gii tools for generating  files for migration by schema of table , phpdoc or table data",
+            "keywords": [
+                "extension",
+                "yii2"
+            ],
+            "time": "2017-02-03 01:23:24"
+        },
+        {
+            "name": "kartik-v/bootstrap-fileinput",
+            "version": "v4.3.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kartik-v/bootstrap-fileinput.git",
+                "reference": "219447a8c21b1c82e534dc2e6a73386933fc9c5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kartik-v/bootstrap-fileinput/zipball/219447a8c21b1c82e534dc2e6a73386933fc9c5e",
+                "reference": "219447a8c21b1c82e534dc2e6a73386933fc9c5e",
                 "shasum": ""
             },
             "type": "library",
@@ -548,7 +594,7 @@
                 "progress",
                 "upload"
             ],
-            "time": "2017-02-12 02:31:28"
+            "time": "2017-02-21 06:45:16"
         },
         {
             "name": "kartik-v/bootstrap-star-rating",
@@ -638,16 +684,16 @@
         },
         {
             "name": "kartik-v/yii2-krajee-base",
-            "version": "v1.8.7",
+            "version": "v1.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-krajee-base.git",
-                "reference": "8f558809e6093c8f4f4599b7b9fd64b366b22a60"
+                "reference": "2479241c03c87995cfc528ae7b297f5ae9e733cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/8f558809e6093c8f4f4599b7b9fd64b366b22a60",
-                "reference": "8f558809e6093c8f4f4599b7b9fd64b366b22a60",
+                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/2479241c03c87995cfc528ae7b297f5ae9e733cb",
+                "reference": "2479241c03c87995cfc528ae7b297f5ae9e733cb",
                 "shasum": ""
             },
             "require": {
@@ -685,7 +731,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-09-04 09:25:29"
+            "time": "2017-02-22 05:58:53"
         },
         {
             "name": "kartik-v/yii2-widget-activeform",
@@ -2267,20 +2313,20 @@
         },
         {
             "name": "yiisoft/yii2-debug",
-            "version": "2.0.7",
+            "version": "2.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "a74a2433ad1dfda30a253a92f6db52c131807432"
+                "reference": "647be6c9d48dc2f3c2e2f33b9eba0a4ca78abde9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/a74a2433ad1dfda30a253a92f6db52c131807432",
-                "reference": "a74a2433ad1dfda30a253a92f6db52c131807432",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/647be6c9d48dc2f3c2e2f33b9eba0a4ca78abde9",
+                "reference": "647be6c9d48dc2f3c2e2f33b9eba0a4ca78abde9",
                 "shasum": ""
             },
             "require": {
-                "yiisoft/yii2": "~2.0.4",
+                "yiisoft/yii2": "~2.0.11",
                 "yiisoft/yii2-bootstrap": "~2.0.0"
             },
             "type": "yii2-extension",
@@ -2310,7 +2356,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2016-11-24 09:42:29"
+            "time": "2017-02-21 10:30:50"
         },
         {
             "name": "yiisoft/yii2-faker",

@@ -23,6 +23,11 @@ php yii migrate/up --migrationPath=@vendor/dektrium/yii2-user/migrations
 php yii migrate --migrationPath=@yii/rbac/migrations/
 ```
 
+Запускаем миграции проекта
+```
+php yii migrate/up
+```
+
 Создаем необходимую структуру ролей Rbac
 ```
 php yii rbac-manager/init-roles
