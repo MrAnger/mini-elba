@@ -26,6 +26,7 @@ use yii\helpers\ArrayHelper;
 
 			<?= $form->field($model, 'inn')
 				->textInput([
+					'class'     => 'form-control integer-input',
 					'maxlength' => true,
 				])
 			?>

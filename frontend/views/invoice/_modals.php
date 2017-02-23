@@ -48,7 +48,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem();
 						<?= $form->field($emptyInvoiceItemModel, 'total_paid')
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm text-center js-input-paid',
+								'class' => 'form-control input-sm text-center price-input js-input-paid',
 							])
 						?>
 					</div>

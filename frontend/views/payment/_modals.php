@@ -65,7 +65,7 @@ $emptyPaymentLinkModel = new \common\models\PaymentLinkToInvoice();
 						</td>
 						<td class="text-right">
 							<div style="display: inline-block; width: 35%;">
-								<input type="text" class="form-control input-sm js-input-sum">
+								<input type="text" class="form-control input-sm price-input js-input-sum">
 								<i class="js-fake-input-sum"></i>
 							</div>
 							<div style="display: inline-block;">

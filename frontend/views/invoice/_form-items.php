@@ -63,7 +63,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]quantity")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm js-input-quantity',
+								'class' => 'form-control input-sm integer-input js-input-quantity',
 								'value' => $item->quantity,
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('quantity')) ?></div>
@@ -81,7 +81,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]price")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm js-input-price',
+								'class' => 'form-control input-sm price-input js-input-price',
 								'value' => $item->price,
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('price')) ?></div>
@@ -90,7 +90,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]summary")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm js-input-summary',
+								'class' => 'form-control input-sm price-input js-input-summary',
 								'value' => $item->summary,
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('summary')) ?></div>
@@ -125,7 +125,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]quantity")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm js-input-quantity',
+					'class' => 'form-control input-sm integer-input js-input-quantity',
 				]) ?>
 		</td>
 		<td>
@@ -139,14 +139,14 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]price")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm js-input-price',
+					'class' => 'form-control input-sm price-input js-input-price',
 				]) ?>
 		</td>
 		<td style="position: relative;">
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]summary")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm js-input-summary',
+					'class' => 'form-control input-sm price-input js-input-summary',
 				]) ?>
 			<a class="js-item-delete" href="#" title="Удалить" style="position: absolute; top: 20px; right: -10px;">
 				<span class="glyphicon glyphicon-trash"></span>
