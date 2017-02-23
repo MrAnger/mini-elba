@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9e1ce5dfd78fae52ec24719a5954e780",
-    "content-hash": "6504a067ba6f6628271a93530f5a180f",
+    "hash": "1d27a14c46d96deb64ff21ec935d56ac",
+    "content-hash": "9e0564c637d04b281e007e8e6b7c6ace",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -136,6 +136,30 @@
                 "jquery",
                 "library"
             ]
+        },
+        {
+            "name": "bower-asset/jquery-sticky",
+            "version": "1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/garand/sticky.git",
+                "reference": "5cfc20c2729f46d789b053781db9f74229a373d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/garand/sticky/zipball/5cfc20c2729f46d789b053781db9f74229a373d1",
+                "reference": "5cfc20c2729f46d789b053781db9f74229a373d1",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": "*"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "jquery.sticky.js",
+                "bower-asset-ignore": []
+            },
+            "description": "Sticky is a jQuery plugin that gives you the ability to make any element on your page always stay visible."
         },
         {
             "name": "bower-asset/jquery.inputmask",

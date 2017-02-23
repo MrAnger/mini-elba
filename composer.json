@@ -24,7 +24,8 @@
         "himiklab/yii2-sitemap-module" : "*",
         "kartik-v/yii2-widgets": "*",
         "insolita/yii2-migration-generator": "^2.2",
-        "bower-asset/growl": "^1.3"
+        "bower-asset/growl": "^1.3",
+        "bower-asset/jquery-sticky": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

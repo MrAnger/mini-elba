@@ -5,6 +5,7 @@ use common\helpers\InvoiceHelper;
 use common\helpers\PaymentHelper;
 use common\models\Contractor;
 use common\models\Invoice;
+use common\models\InvoiceItem;
 use common\models\Payment;
 use Yii;
 use yii\helpers\Url;
@@ -93,9 +94,39 @@ class SiteController extends BaseController {
 			$statList[$contractor->id]['summary'] += $contractor->getInvoices()->sum('summary');
 		}
 
+		// Подготавливаем расширенную информацию о должниках
+		$debtorDetailList = [];
+
+		/** @var Invoice[] $invoiceNotPaidList */
+		$invoiceNotPaidList = InvoiceHelper::applyAccessByUser(Invoice::find()->where(['is_paid' => 0]))
+			->all();
+
+		foreach ($invoiceNotPaidList as $invoice) {
+			if (!isset($debtorDetailList[$invoice->contractor_id])) {
+				$debtorDetailList[$invoice->contractor_id] = [
+					'contractor'     => $invoice->contractor,
+					'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id, 'is_paid' => 0]),
+					'debtorSum'      => 0,
+					'invoiceList'    => [],
+				];
+			}
+
+			$invoiceData = [
+				'invoice'    => $invoice,
+				'invoiceUrl' => Url::to(['/invoice/view', 'id' => $invoice->id]),
+				'items'      => $invoice->getItems()
+					->andWhere(['=', 'is_paid', 0])
+					->all(),
+			];
+
+			$debtorDetailList[$invoice->contractor_id]['invoiceList'][] = $invoiceData;
+			$debtorDetailList[$invoice->contractor_id]['debtorSum'] += $invoice->summary - $invoice->total_paid;
+		}
+
 		return $this->render('index', [
-			'debtorList' => $debtorList,
-			'statList'   => $statList,
+			'debtorList'       => $debtorList,
+			'debtorDetailList' => $debtorDetailList,
+			'statList'         => $statList,
 		]);
 	}
 

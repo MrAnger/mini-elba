@@ -80,3 +80,55 @@ a.desc:after {
     top: 0;
     visibility: hidden
 }
+
+/* Fast Access Buttons */
+.fast-buttons {
+    position: fixed;
+    right: 0;
+    top: 45%;
+    z-index: 100;
+    text-align: right;
+}
+
+.fast-buttons .trigger {
+    display: inline-block;
+    border-radius: 10px 0 0 10px;
+    background: #5cb85c;
+    width: 15px;
+    padding: 50px 0;
+    text-align: center;
+    color: #fff;
+    font: 18px/15px Arial;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.fast-buttons ul {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+}
+
+.fast-buttons .btn {
+    display: none;
+    min-width: 33px;
+    margin-bottom: 1px;
+}
+
+.fast-buttons .btn .text {
+    display: none;
+}
+
+.fast-buttons .btn:hover .text {
+    display: inline;
+}
+
+.fast-buttons:hover .trigger {
+    visibility: hidden;
+}
+
+.fast-buttons:hover .btn {
+    display: inline-block;
+}

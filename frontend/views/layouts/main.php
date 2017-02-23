@@ -38,4 +38,7 @@ FrontendAsset::register($this);
 		</div>
 	</div>
 </section>
+
+<?= $this->render('_fast-buttons') ?>
+
 <?php $this->endContent() ?>

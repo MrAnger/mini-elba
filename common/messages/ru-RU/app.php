@@ -27,7 +27,7 @@ return [
 	'Created At'      => 'Создан',
 	'Updated At'      => 'Изменен',
 
-	'{delta, plural, =1{1 invoice} other{# invoices}}' => '{delta, plural, one{# счёт} few{# счетов} many{# счетов} other{# счетов}}',
+	'{delta, plural, =1{1 invoice} other{# invoices}}' => '{delta, plural, one{# счёт} few{# счета} many{# счетов} other{# счетов}}',
 
 	'Contractor'  => 'Контрагент',
 	'Contractors' => 'Контрагенты',

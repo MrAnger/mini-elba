@@ -46,6 +46,5 @@ $user = Yii::$app->user;
 
 	</div>
 	<!-- header-right -->
-
 </div>
 <!-- headerwrapper -->
