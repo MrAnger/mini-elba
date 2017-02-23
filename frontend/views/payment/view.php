@@ -31,6 +31,10 @@ $formatter = Yii::$app->formatter;
 $linkedSum = PaymentHelper::getLinkedSum($model);
 
 $incomeString = "<i title='Связано' class='" . (($linkedSum < $model->income) ? 'text-danger' : 'text-success') . "'>" . $formatter->asCurrency($linkedSum) . "</i> / <b title='Сумма поступления'>" . $formatter->asCurrency($model->income) . "</b>";
+
+if ($linkedSum > $model->income) {
+	$incomeString .= "<br><b class='text-danger'>Переизбыток связки со счетами: " . $formatter->asCurrency($model->income - $linkedSum) . "</b>";
+}
 ?>
 <div>
 

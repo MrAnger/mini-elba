@@ -28,7 +28,12 @@ $this->params['breadcrumbs'] = [
 $formatter = Yii::$app->formatter;
 
 $debts = $model->summary - $model->total_paid;
-$debtString = ($debts) ? "<br><span class='text-danger'>Задолженность: " . $formatter->asCurrency($debts) . "</span>" : null;
+$debtString = null;
+if ($debts > 0) {
+	$debtString = "<br><span class='text-danger'>Задолженность: " . $formatter->asCurrency($debts) . "</span>";
+} elseif ($debts < 0) {
+	$debtString = "<br><b class='text-danger'>Переизбыток: " . $formatter->asCurrency($debts) . "</b>";
+}
 ?>
 <div>
 

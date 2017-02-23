@@ -31,9 +31,9 @@ class InvoiceItem extends InvoiceItemBase {
 			$availableTotalPaid = $this->getAvailableTotalPaid();
 
 			if ($this->total_paid < 0) {
-				$this->addError('total_paid', "Это значение не может быть меньше 0.");
+				$this->addError('total_paid', "'" . $this->getAttributeLabel('total_paid') . "' не может быть меньше 0.");
 			} elseif ($this->total_paid > $availableTotalPaid) {
-				$this->addError('total_paid', "Максимальное возможное значение для текущей позиции: " . Yii::$app->formatter->asCurrency($availableTotalPaid));
+				$this->addError('total_paid', "Максимальное возможное значение '" . $this->getAttributeLabel('total_paid') . "' для текущей позиции: " . Yii::$app->formatter->asCurrency($availableTotalPaid));
 			}
 		}
 	}

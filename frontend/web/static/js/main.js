@@ -125,7 +125,7 @@
                 $form.find('.js-item-id').val(response.item.id);
                 $form.find('.js-input-paid')
                     .attr('placeholder', $.format.number(response.availableSum, '#,##0.00#'))
-                    .val(response.availableSum);
+                    .val(parseFloat(response.availableSum).toFixed(2));
 
                 $form.yiiActiveForm('resetForm');
 

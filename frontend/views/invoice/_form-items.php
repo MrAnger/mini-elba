@@ -49,7 +49,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 			</thead>
 			<tbody class="js-items-holder">
 			<?php foreach ($itemList as $itemId => $item): ?>
-				<tr class="item" data-id="<?= $itemId ?>">
+				<tr class="item <?= ($item->hasErrors()) ? 'has-error' : '' ?>" data-id="<?= $itemId ?>">
 					<td>
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]name")
 							->label(false)

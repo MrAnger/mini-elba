@@ -316,5 +316,24 @@ class InvoiceController extends BaseController {
 			'summary' => $summary,
 			'is_paid' => $isPaid,
 		]);
+
+		// Устанавливаем верные пометки оплачено у позиций счёта
+		foreach ($model->getItems()->all() as $item) {
+			/** @var InvoiceItem $item */
+			if ($item->total_paid == $item->summary) {
+				if (!$item->is_paid) {
+					$item->updateAttributes(['is_paid' => 1]);
+				}
+			} elseif ($item->total_paid > $item->summary) {
+				$item->updateAttributes([
+					'is_paid'    => 1,
+					'total_paid' => $item->summary,
+				]);
+			} elseif ($item->total_paid < $item->summary) {
+				$item->updateAttributes([
+					'is_paid' => 0,
+				]);
+			}
+		}
 	}
 }

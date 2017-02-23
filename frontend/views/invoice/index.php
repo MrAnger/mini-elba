@@ -96,6 +96,10 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 
 					$html = "<i class='" . (($model->is_paid) ? 'text-success' : 'text-danger') . "'>" . $formatter->asCurrency($model->total_paid) . "</i> / <b>" . $formatter->asCurrency($model->summary) . "</b>";
 
+					if ($model->total_paid > $model->summary) {
+						$html .= "<br><b class='text-danger'>Переизбыток: " . $formatter->asCurrency($model->summary - $model->total_paid) . "</b>";
+					}
+
 					return $html;
 				},
 				'filter'        => Select2::widget([

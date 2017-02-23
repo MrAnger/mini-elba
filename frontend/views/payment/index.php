@@ -128,6 +128,10 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 
 					$html = "<i title='Связано' class='" . (($linkedSum < $model->income) ? 'text-danger' : 'text-success') . "'>" . $formatter->asCurrency($linkedSum) . "</i> / <b title='Сумма поступления'>" . $formatter->asCurrency($model->income) . "</b>";
 
+					if ($linkedSum > $model->income) {
+						$html .= "<br><b class='text-danger'>Переизбыток связки со счетами: " . $formatter->asCurrency($model->income - $linkedSum) . "</b>";
+					}
+
 					return $html;
 				},
 				'filterOptions' => [

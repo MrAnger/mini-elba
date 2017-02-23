@@ -21,6 +21,8 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 		'enableClientValidation' => false,
 	]) ?>
 
+	<?= $form->errorSummary(array_merge([$model], $itemList)) ?>
+
 	<div class="row">
 		<div class="col-md-6">
 			<?= $form->field($model, 'name')
