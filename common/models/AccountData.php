@@ -105,7 +105,7 @@ class AccountData extends Model {
 	}
 
 	private function setExportContractors() {
-		$query = ContractorHelper::applyAccessByUser(Contractor::find());
+		$query = ContractorHelper::applyAccessByUser(Contractor::find()->orderBy(['created_at' => SORT_DESC]));
 
 		foreach ($query->batch() as $batch) {
 			foreach ($batch as $model)
@@ -114,7 +114,7 @@ class AccountData extends Model {
 	}
 
 	private function setExportInvoices() {
-		$query = InvoiceHelper::applyAccessByUser(Invoice::find());
+		$query = InvoiceHelper::applyAccessByUser(Invoice::find()->orderBy(['created_at' => SORT_DESC, 'id' => SORT_DESC]));
 
 		foreach ($query->batch() as $batch) {
 			foreach ($batch as $model) {
@@ -129,7 +129,7 @@ class AccountData extends Model {
 	}
 
 	private function setExportPayments() {
-		$query = PaymentHelper::applyAccessByUser(Payment::find());
+		$query = PaymentHelper::applyAccessByUser(Payment::find()->orderBy(['created_at' => SORT_DESC]));
 
 		foreach ($query->batch() as $batch) {
 			foreach ($batch as $model) {

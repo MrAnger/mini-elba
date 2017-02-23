@@ -26,7 +26,8 @@ class InvoiceController extends BaseController {
 		$dataProvider = $searchModel->search(Yii::$app->request->getQueryParams());
 
 		$dataProvider->sort->defaultOrder = [
-			'id' => SORT_ASC,
+			'created_at' => SORT_DESC,
+			'id'         => SORT_DESC,
 		];
 
 		$dataProvider->pagination->pageSize = 30;
