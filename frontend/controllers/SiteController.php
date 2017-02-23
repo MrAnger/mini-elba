@@ -8,6 +8,7 @@ use common\models\Invoice;
 use common\models\InvoiceItem;
 use common\models\Payment;
 use Yii;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 
 /**
@@ -123,11 +124,91 @@ class SiteController extends BaseController {
 			$debtorDetailList[$invoice->contractor_id]['debtorSum'] += $invoice->summary - $invoice->total_paid;
 		}
 
+		// Подготавливаем информацию о финансах для графика
+		$financeGraphStat = [];
+
+		// Подгатавливаем каркас данных для последних двух месяцев
+		$date = date_create();
+		$date->setDate($date->format('Y'), $date->format('m'), 1);
+		$date->add(date_interval_create_from_date_string('-12 months'));
+
+		$firstDateRange = null;
+		$lastDateRange = null;
+		for ($i = 1; $i <= 12; $i++) {
+			$date->add(date_interval_create_from_date_string("+1 months"));
+
+			$dateIndex = $date->format('Y-m-d');
+
+			$financeGraphStat[$this->formatDateToFinanceStatGraph($date)] = [];
+
+			if ($i == 1)
+				$firstDateRange = $dateIndex;
+
+			if ($i == 12)
+				$lastDateRange = $dateIndex;
+		}
+
+		$queryPayments = PaymentHelper::applyAccessByUser(Payment::find()
+			->where([
+				'AND',
+				['between', 'date', $firstDateRange, $lastDateRange],
+			]));
+
+		$queryPaymentsClone = clone $queryPayments;
+		$contractorIds = $queryPaymentsClone->select(['contractor_id'])
+			->distinct()
+			->column();
+
+		foreach ($contractorIds as $contractorId) {
+			$contractor = Contractor::findOne($contractorId);
+
+			foreach ($financeGraphStat as &$item) {
+				$item[$contractor->id] = [
+					'contractorName' => $contractor->name,
+					'value'          => 0,
+				];
+			}
+		}
+
+		foreach ($queryPayments->all() as $payment) {
+			/** @var Payment $payment */
+
+			$financeGraphStat[$this->formatDateToFinanceStatGraph($payment->date)][$payment->contractor_id]['value'] += $payment->income;
+		}
+
 		return $this->render('index', [
 			'debtorList'       => $debtorList,
 			'debtorDetailList' => $debtorDetailList,
 			'statList'         => $statList,
+			'financeGraphStat' => $financeGraphStat,
 		]);
+	}
+
+	/**
+	 * @param string|\DateTime $date
+	 *
+	 * @return string
+	 */
+	private function formatDateToFinanceStatGraph($date) {
+		if (is_string($date))
+			$date = date_create($date);
+
+		$monthNameMap = [
+			'01' => 'Январь',
+			'02' => 'Февраль',
+			'03' => 'Март',
+			'04' => 'Апрель',
+			'05' => 'Май',
+			'06' => 'Июнь',
+			'07' => 'Июль',
+			'08' => 'Август',
+			'09' => 'Сентябрь',
+			'10' => 'Октрябрь',
+			'11' => 'Ноябрь',
+			'12' => 'Декабрь',
+		];
+
+		return ArrayHelper::getValue($monthNameMap, $date->format('m')) . $date->format(' Y');
 	}
 
 	public function beforeAction($action) {
