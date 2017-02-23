@@ -57,7 +57,7 @@ $emptyPaymentLinkModel = new \common\models\PaymentLinkToInvoice();
 							<input class="js-checked" type="checkbox">
 						</td>
 						<td>
-							<b class="js-name"></b>
+							<a href="#" target="_blank" class="js-name" style="font-weight: bold;"></a>
 
 							<div class="js-sum-left">
 								<small class="value"></small>

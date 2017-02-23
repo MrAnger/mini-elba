@@ -17,6 +17,7 @@ use yii\data\ActiveDataProvider;
 use yii\db\Expression;
 use yii\helpers\ArrayHelper;
 use yii\helpers\FileHelper;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\ForbiddenHttpException;
 use yii\web\MethodNotAllowedHttpException;
@@ -131,6 +132,7 @@ class PaymentController extends BaseController {
 				'summary'    => $link->invoice->summary,
 				'linked'     => true,
 				'linked_sum' => $link->sum,
+				'invoiceUrl' => Url::to(['/invoice/view', 'id' => $link->invoice->id]),
 			];
 		}
 		// Далее добавляем те счета, которые можно привязать к этому поступлению
@@ -153,6 +155,7 @@ class PaymentController extends BaseController {
 				'summary'    => $invoice->summary,
 				'linked'     => false,
 				'linked_sum' => 0,
+				'invoiceUrl' => Url::to(['/invoice/view', 'id' => $invoice->id]),
 			];
 		}
 

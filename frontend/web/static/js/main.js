@@ -196,6 +196,7 @@
                     $item.data('invoice', invoice);
 
                     $checkBoxInput.prop('checked', (invoice.linked) ? true : false);
+                    $nameHolder.attr('href', invoice.invoiceUrl);
                     $nameHolder.html(invoice.name);
 
                     // Настраиваем первичное отображения инпутов линкованной суммы
