@@ -63,7 +63,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]quantity")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm integer-input js-input-quantity',
+								'class' => 'form-control input-sm price-input js-input-quantity',
 								'value' => $item->quantity,
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('quantity')) ?></div>
@@ -125,7 +125,7 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]quantity")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm integer-input js-input-quantity',
+					'class' => 'form-control input-sm price-input js-input-quantity',
 				]) ?>
 		</td>
 		<td>
