@@ -23,6 +23,7 @@ foreach ($debtorDetailList as $debtorData)
 // Необходимо создать подходящий по структуре массив данных для графика финансов
 $financeGraphData = [];
 
+$financeGraphValues = [];
 $isFirstColumnSetted = false;
 foreach ($financeGraphStat as $dateName => $item) {
 	if (!$isFirstColumnSetted) {
@@ -38,11 +39,23 @@ foreach ($financeGraphStat as $dateName => $item) {
 
 	$data = [$dateName];
 
-	foreach ($item as $contractorData)
+	$sum = 0;
+	foreach ($item as $contractorData) {
 		$data[] = ArrayHelper::getValue($contractorData, 'value');
+		$sum += ArrayHelper::getValue($contractorData, 'value');
+	}
+
+	if ($sum > 0) {
+		$financeGraphValues[] = $sum;
+	}
 
 	$financeGraphData[] = $data;
 }
+
+$financeGraphMinValue = min(array_values($financeGraphValues));
+$financeGraphMaxValue = max(array_values($financeGraphValues));
+$financeGraphAverageValue = array_sum($financeGraphValues) / count($financeGraphValues);
+$financeGraphSumValue = array_sum($financeGraphValues);
 ?>
 <div>
 	<div class="row">
@@ -230,6 +243,24 @@ foreach ($financeGraphStat as $dateName => $item) {
 					</div>
 					<div class="panel-body">
 						<div id="chart-finance-income-12-month" style="height: 500px;"></div>
+
+						<div class="row text-center" style="font-size: x-large;">
+							<div class="col-md-3">
+								<b>Минимум:</b> <i><?= $formatter->asCurrency($financeGraphMinValue) ?></i>
+							</div>
+
+							<div class="col-md-3">
+								<b>Максимум:</b> <i><?= $formatter->asCurrency($financeGraphMaxValue) ?></i>
+							</div>
+
+							<div class="col-md-3">
+								<b>Среднее:</b> <i><?= $formatter->asCurrency($financeGraphAverageValue) ?></i>
+							</div>
+
+							<div class="col-md-3">
+								<b>Всего:</b> <i><?= $formatter->asCurrency($financeGraphSumValue) ?></i>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
