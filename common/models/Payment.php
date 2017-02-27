@@ -33,8 +33,9 @@ class Payment extends PaymentBase {
 	public function rules() {
 		return array_merge(parent::rules(), [
 			[['income'], 'required'],
-			[['description', 'document_number'], 'trim'],
+			[['description', 'document_number', 'is_include_into_stat'], 'trim'],
 			[['description', 'document_number'], 'default'],
+			[['is_include_into_stat'], 'default', 'value' => 1],
 		]);
 	}
 

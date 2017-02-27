@@ -65,6 +65,12 @@ $contractorNameList = ArrayHelper::map(ContractorHelper::applyAccessByUser(Contr
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-md-12">
+			<?= $form->field($model, 'is_include_into_stat')->checkbox() ?>
+		</div>
+	</div>
+
 	<div class="form-group text-right">
 		<?= Html::submitButton(($model->isNewRecord) ? Yii::t('app.actions', 'Create') : Yii::t('app.actions', 'Save'), ['class' => 'btn btn-primary']) ?>
 	</div>

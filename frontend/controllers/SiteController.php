@@ -152,6 +152,7 @@ class SiteController extends BaseController {
 			->where([
 				'AND',
 				['between', 'date', $firstDateRange, $lastDateRange],
+				['=', 'is_include_into_stat', 1],
 			]));
 
 		$queryPaymentsClone = clone $queryPayments;

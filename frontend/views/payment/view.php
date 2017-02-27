@@ -62,6 +62,7 @@ if ($linkedSum > $model->income) {
 						'format'    => 'raw',
 						'value'     => $incomeString,
 					],
+					'is_include_into_stat:boolean',
 					'created_at:datetime',
 					'updated_at:datetime',
 				],

@@ -15,6 +15,7 @@ use Yii;
  * @property float $income
  * @property float $outcome
  * @property string $description
+ * @property integer $is_include_into_stat
  * @property string $created_at
  * @property string $updated_at
  *
@@ -33,7 +34,7 @@ class PaymentBase extends \yii\db\ActiveRecord {
 	public function rules() {
 		return [
 			[['user_id', 'contractor_id', 'date'], 'required'],
-			[['user_id', 'contractor_id', 'document_number'], 'integer'],
+			[['user_id', 'contractor_id', 'document_number', 'is_include_into_stat'], 'integer'],
 			[['date', 'created_at', 'updated_at'], 'safe'],
 			[['income', 'outcome'], 'number'],
 			[['description'], 'string'],
@@ -46,16 +47,17 @@ class PaymentBase extends \yii\db\ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return [
-			'id'              => Yii::t('app', 'ID'),
-			'user_id'         => Yii::t('app', 'User'),
-			'contractor_id'   => Yii::t('app', 'Contractor'),
-			'date'            => Yii::t('app', 'Date'),
-			'document_number' => Yii::t('app', 'Document Number'),
-			'income'          => Yii::t('app', 'Income'),
-			'outcome'         => Yii::t('app', 'Outcome'),
-			'description'     => Yii::t('app', 'Description'),
-			'created_at'      => Yii::t('app', 'Created At'),
-			'updated_at'      => Yii::t('app', 'Updated At'),
+			'id'                   => Yii::t('app', 'ID'),
+			'user_id'              => Yii::t('app', 'User'),
+			'contractor_id'        => Yii::t('app', 'Contractor'),
+			'date'                 => Yii::t('app', 'Date'),
+			'document_number'      => Yii::t('app', 'Document Number'),
+			'income'               => Yii::t('app', 'Income'),
+			'outcome'              => Yii::t('app', 'Outcome'),
+			'is_include_into_stat' => Yii::t('app', 'Is Include Into Stat'),
+			'description'          => Yii::t('app', 'Description'),
+			'created_at'           => Yii::t('app', 'Created At'),
+			'updated_at'           => Yii::t('app', 'Updated At'),
 		];
 	}
 }
