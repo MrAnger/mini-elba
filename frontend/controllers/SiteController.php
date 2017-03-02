@@ -148,6 +148,12 @@ class SiteController extends BaseController {
 				$lastDateRange = $dateIndex;
 		}
 
+		// Теперь необходимо последнюю дату выбранного диапазона сделать последним числом выбранного месяца
+		$lastDateRange = date_create_from_format('Y-m-d', $lastDateRange);
+		$lastDateRange->add(date_interval_create_from_date_string("+1 months"));
+		$lastDateRange->add(date_interval_create_from_date_string("-1 days"));
+		$lastDateRange = $lastDateRange->format('Y-m-d');
+
 		$queryPayments = PaymentHelper::applyAccessByUser(Payment::find()
 			->where([
 				'AND',
