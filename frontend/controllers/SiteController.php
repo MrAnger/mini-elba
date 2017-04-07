@@ -100,6 +100,10 @@ class SiteController extends BaseController {
 
 		/** @var Invoice[] $invoiceNotPaidList */
 		$invoiceNotPaidList = InvoiceHelper::applyAccessByUser(Invoice::find()->where(['is_paid' => 0]))
+			->orderBy([
+				'created_at' => SORT_DESC,
+				'id'         => SORT_DESC,
+			])
 			->all();
 
 		foreach ($invoiceNotPaidList as $invoice) {

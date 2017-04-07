@@ -199,7 +199,10 @@ $financeGraphSumValue = array_sum($financeGraphValues);
 									?>
 									<tr>
 										<td colspan="2" style="border-top: none; padding-left: 25px;">
-											<?= Html::a($invoice->name, $invoiceData['invoiceUrl']) ?>
+											<?= Html::a($invoice->name, $invoiceData['invoiceUrl']) ?> -
+											<span class='text-danger'>
+												<?= $formatter->asCurrency($invoice->summary - $invoice->total_paid) ?>
+											</span>
 										</td>
 										<td class="text-center" style="border-top: none;"></td>
 									</tr>
