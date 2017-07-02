@@ -241,7 +241,7 @@ class InvoiceController extends BaseController {
 
 		$term = trim($this->request->get('term', ''));
 
-		$result = InvoiceItem::find()
+		$query = InvoiceItem::find()
 			->select([$attribute])
 			->distinct()
 			->where([
@@ -249,13 +249,24 @@ class InvoiceController extends BaseController {
 				['like', $attribute, $term],
 				"$attribute IS NOT NULL",
 			])
-			->orderBy([
-				$attribute => SORT_ASC,
-				'id'       => SORT_DESC,
-			])
 			->limit(15)
-			->asArray()
-			->all();
+			->asArray();
+
+		switch ($attribute) {
+			case 'unit':
+			case 'price':
+				$query->orderBy([
+					$attribute => SORT_ASC,
+					'id'       => SORT_DESC,
+				]);
+				break;
+			default:
+				$query->orderBy([
+					'id' => SORT_DESC,
+				]);
+		}
+
+		$result = $query->all();
 
 		$result = ArrayHelper::getColumn($result, $attribute);
 
