@@ -37,7 +37,10 @@
 
             $el.autocomplete({
                 source: source,
-                minLength: minLength
+                minLength: minLength,
+                close: function (event, ui) {
+                    $(event.target).trigger('change');
+                }
             });
 
             $el.dblclick(function (e) {
@@ -87,8 +90,9 @@
         }
 
         calculateInvoiceSummary();
+        // Скрипт автоматичесского расчета общей суммы счета
 
-        $(document).on('input', '.js-input-summary', function (e) {
+        $(document).on('input change', '.js-input-summary', function (e) {
             var $item = $(this).parents('.item'),
                 $quantity = $item.find('.js-input-quantity'),
                 $price = $item.find('.js-input-price'),
@@ -106,7 +110,7 @@
         });
 
         // Скрипт автоматического расчета суммы позиции счета при изменении кол-ва или стоимости за единицу
-        $(document).on('input', '.js-input-quantity, .js-input-price', function (e) {
+        $(document).on('input change', '.js-input-quantity, .js-input-price', function (e) {
             var $item = $(this).parents('.item'),
                 $quantity = $item.find('.js-input-quantity'),
                 $price = $item.find('.js-input-price'),
