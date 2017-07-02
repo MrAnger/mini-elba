@@ -25,7 +25,38 @@
             itemHtml = itemHtml.replace(/tIDt/ig, id);
 
             $itemsHolder.append($(itemHtml));
+
+            generateInvoiceAutocomplete();
         });
+
+        // Скрипт создания Jui Autoсomplete
+        function createAutocomplete($el, source, minLength) {
+            if (minLength === undefined) {
+                minLength = 0;
+            }
+
+            $el.autocomplete({
+                source: source,
+                minLength: minLength
+            });
+
+            $el.dblclick(function (e) {
+                $el.trigger('input')
+            });
+        }
+
+        // Скрипт автоматической инициализации Jui Autocomplete для элементов счета
+        function generateInvoiceAutocomplete() {
+            var $positionList = $('#invoice-position-list');
+
+            $positionList.find('.js-autocomplete-item').each(function (key, el) {
+                if ($(el).data('ui-autocomplete') === undefined) {
+                    createAutocomplete($(el), $(el).data('autocomplete-source'));
+                }
+            });
+        }
+
+        generateInvoiceAutocomplete();
 
         $(document).on('click', '.js-item-delete', function (e) {
             e.preventDefault();

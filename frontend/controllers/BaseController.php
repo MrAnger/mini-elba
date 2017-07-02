@@ -9,11 +9,31 @@ use yii\filters\VerbFilter;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\web\Controller;
+use yii\web\Request;
+use yii\web\Session;
 
 /**
  * @author MrAnger
  */
 abstract class BaseController extends Controller {
+	/**
+	 * @var Request
+	 */
+	public $request;
+
+	/**
+	 * @var Session
+	 */
+	public $session;
+
+	public function init() {
+		parent::init();
+
+		$this->request = Yii::$app->request;
+
+		$this->session = Yii::$app->session;
+	}
+
 	/**
 	 * @return array
 	 */

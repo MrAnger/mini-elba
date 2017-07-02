@@ -7,11 +7,14 @@
  * @var \yii\widgets\ActiveForm $form
  */
 
+use common\models\InvoiceItem;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
 
-$emptyInvoiceItemModel = new \common\models\InvoiceItem([
+\yii\jui\JuiAsset::register($this);
+
+$emptyInvoiceItemModel = new InvoiceItem([
 	'invoice_id' => $model->id,
 ]);
 ?>
@@ -47,15 +50,19 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 				<small>Всего</small>
 			</th>
 			</thead>
-			<tbody class="js-items-holder">
+			<tbody id="invoice-position-list" class="js-items-holder">
 			<?php foreach ($itemList as $itemId => $item): ?>
 				<tr class="item <?= ($item->hasErrors()) ? 'has-error' : '' ?>" data-id="<?= $itemId ?>">
 					<td>
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]name")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm js-input-name',
-								'value' => $item->name,
+								'class'        => 'form-control input-sm js-input-name js-autocomplete-item',
+								'value'        => $item->name,
+								'autocomplete' => 'off',
+								'data'         => [
+									'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'name'], true),
+								],
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('name')) ?></div>
 					</td>
@@ -63,8 +70,9 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]quantity")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm price-input js-input-quantity',
-								'value' => $item->quantity,
+								'class'        => 'form-control input-sm price-input js-input-quantity',
+								'value'        => $item->quantity,
+								'autocomplete' => 'off',
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('quantity')) ?></div>
 					</td>
@@ -72,8 +80,12 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]unit")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm js-input-unit',
-								'value' => $item->unit,
+								'class'        => 'form-control input-sm js-input-unit js-autocomplete-item',
+								'value'        => $item->unit,
+								'autocomplete' => 'off',
+								'data'         => [
+									'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'unit'], true),
+								],
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('unit')) ?></div>
 					</td>
@@ -81,8 +93,12 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]price")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm price-input js-input-price',
-								'value' => $item->price,
+								'class'        => 'form-control input-sm price-input js-input-price js-autocomplete-item',
+								'value'        => $item->price,
+								'autocomplete' => 'off',
+								'data'         => [
+									'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'price'], true),
+								],
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('price')) ?></div>
 					</td>
@@ -90,8 +106,9 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 						<?= $form->field($emptyInvoiceItemModel, "[$itemId]summary")
 							->label(false)
 							->textInput([
-								'class' => 'form-control input-sm price-input js-input-summary',
-								'value' => $item->summary,
+								'class'        => 'form-control input-sm price-input js-input-summary',
+								'autocomplete' => 'off',
+								'value'        => $item->summary,
 							]) ?>
 						<div class="text-danger"><?= implode('<br>', $item->getErrors('summary')) ?></div>
 						<a class="js-item-delete" href="#" title="Удалить"
@@ -118,35 +135,49 @@ $emptyInvoiceItemModel = new \common\models\InvoiceItem([
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]name")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm js-input-name',
+					'class'        => 'form-control input-sm js-input-name js-autocomplete-item',
+					'autocomplete' => 'off',
+					'data'         => [
+						'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'name'], true),
+					],
 				]) ?>
 		</td>
 		<td>
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]quantity")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm price-input js-input-quantity',
+					'class'        => 'form-control input-sm price-input js-input-quantity',
+					'autocomplete' => 'off',
 				]) ?>
 		</td>
 		<td>
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]unit")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm js-input-unit',
+					'class'        => 'form-control input-sm js-input-unit js-autocomplete-item',
+					'autocomplete' => 'off',
+					'data'         => [
+						'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'unit'], true),
+					],
 				]) ?>
 		</td>
 		<td>
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]price")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm price-input js-input-price',
+					'class'        => 'form-control input-sm price-input js-input-price js-autocomplete-item',
+					'autocomplete' => 'off',
+					'data'         => [
+						'autocomplete-source' => Url::to(['item-autocomplete', 'attribute' => 'price'], true),
+					],
 				]) ?>
 		</td>
 		<td style="position: relative;">
 			<?= $form->field($emptyInvoiceItemModel, "[tIDt]summary")
 				->label(false)
 				->textInput([
-					'class' => 'form-control input-sm price-input js-input-summary',
+					'class'        => 'form-control input-sm price-input js-input-summary',
+					'autocomplete' => 'off',
 				]) ?>
 			<a class="js-item-delete" href="#" title="Удалить" style="position: absolute; top: 20px; right: -10px;">
 				<span class="glyphicon glyphicon-trash"></span>

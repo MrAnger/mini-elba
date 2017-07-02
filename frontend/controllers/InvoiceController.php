@@ -236,6 +236,41 @@ class InvoiceController extends BaseController {
 		return ActiveForm::validate($itemModel);
 	}
 
+	public function actionItemAutocomplete($attribute) {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$term = trim($this->request->get('term', ''));
+
+		$result = InvoiceItem::find()
+			->select([$attribute])
+			->distinct()
+			->where([
+				'AND',
+				['like', $attribute, $term],
+				"$attribute IS NOT NULL",
+			])
+			->orderBy([
+				$attribute => SORT_ASC,
+				'id'       => SORT_DESC,
+			])
+			->limit(15)
+			->asArray()
+			->all();
+
+		$result = ArrayHelper::getColumn($result, $attribute);
+
+		if ($attribute == 'price') {
+			// Убираем лишние нули в ценниках
+			foreach ($result as &$value) {
+				if (intval($value) == $value) {
+					$value = (string)intval($value);
+				}
+			}
+		}
+
+		return $result;
+	}
+
 	/**
 	 * @param mixed $pk
 	 *
