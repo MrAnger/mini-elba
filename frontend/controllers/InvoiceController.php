@@ -243,7 +243,7 @@ class InvoiceController extends BaseController {
 
 		$query = InvoiceItem::find()
 			->joinWith('invoice it')
-			->select([$attribute])
+			->select([InvoiceItem::tableName() . ".$attribute"])
 			->distinct()
 			->where([
 				'AND',
