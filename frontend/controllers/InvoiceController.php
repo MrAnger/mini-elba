@@ -242,27 +242,28 @@ class InvoiceController extends BaseController {
 		$term = trim($this->request->get('term', ''));
 
 		$query = InvoiceItem::find()
+			->joinWith('invoice it')
 			->select([$attribute])
 			->distinct()
 			->where([
 				'AND',
-				['like', $attribute, $term],
-				"$attribute IS NOT NULL",
+				['=', 'it.user_id', Yii::$app->user->id],
+				['like', InvoiceItem::tableName() . ".$attribute", $term],
+				InvoiceItem::tableName() . ".$attribute IS NOT NULL",
 			])
-			->limit(15)
-			->asArray();
+			->limit(15);
 
 		switch ($attribute) {
 			case 'unit':
 			case 'price':
 				$query->orderBy([
-					$attribute => SORT_ASC,
-					'id'       => SORT_DESC,
+					InvoiceItem::tableName() . ".$attribute" => SORT_ASC,
+					InvoiceItem::tableName() . '.id'         => SORT_DESC,
 				]);
 				break;
 			default:
 				$query->orderBy([
-					'id' => SORT_DESC,
+					InvoiceItem::tableName() . '.id' => SORT_DESC,
 				]);
 		}
 
