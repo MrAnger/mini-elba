@@ -71,15 +71,28 @@ $userEmailList = ArrayHelper::map($userList, 'email', 'email');
 				'filter' => false,
 			],
 			[
-				'class'         => \yii\grid\ActionColumn::className(),
-				'template'      => '{update}',
-				'filterOptions' => [
+				'class'          => \yii\grid\ActionColumn::className(),
+				'template'       => '{auth-as-user} {update}',
+				'buttons'        => [
+					'auth-as-user' => function ($url, User $model, $key) {
+						return Html::a('<i class="glyphicon glyphicon-user"></i>', $url, [
+							'title'        => 'Залогиниться под этим пользователем',
+							'data-confirm' => 'Вы действительно хотите авторизоватьяс под этим пользователем?',
+						]);
+					},
+				],
+				'visibleButtons' => [
+					'auth-as-user' => function (User $model, $key, $index) {
+						return Yii::$app->user->id != $model->id;
+					},
+				],
+				'filterOptions'  => [
 					'class' => 'action-column',
 				],
-				'headerOptions' => [
+				'headerOptions'  => [
 					'class' => 'action-column',
 				],
-				'options'       => [
+				'options'        => [
 					'class' => 'action-column',
 				],
 			],

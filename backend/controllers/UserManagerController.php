@@ -83,6 +83,19 @@ class UserManagerController extends BaseController {
 	/**
 	 * @param string $id
 	 *
+	 * @return mixed
+	 */
+	public function actionAuthAsUser($id) {
+		$model = $this->findModel($id);
+
+		Yii::$app->getUser()->login($model, 0);
+
+		return $this->goHome();
+	}
+
+	/**
+	 * @param string $id
+	 *
 	 * @return User
 	 *
 	 * @throws NotFoundHttpException
