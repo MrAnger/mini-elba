@@ -377,7 +377,7 @@ class PaymentController extends BaseController {
 		/** @var PaymentData[] $incomes */
 		$incomes = [];
 		foreach ($parseResult as $item) {
-			if ($item->recipient_inn == $user->profile->inn) {
+			if ($item->recipient_inn == $user->profile->inn && $item->payer_inn != $item->recipient_inn) {
 				$incomes[] = $item;
 			}
 		}
