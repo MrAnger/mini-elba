@@ -56,6 +56,13 @@ $financeGraphMinValue = min(array_values($financeGraphValues));
 $financeGraphMaxValue = max(array_values($financeGraphValues));
 $financeGraphAverageValue = array_sum($financeGraphValues) / count($financeGraphValues);
 $financeGraphSumValue = array_sum($financeGraphValues);
+
+\common\assets\GoogleChartsAsset::register($this);
+$this->registerJs(<<<JS
+    google.charts.load('current', {packages: ['corechart']});
+JS
+, \yii\web\View::POS_HEAD);
+$this->registerJs("var financeGraphData = " . \yii\helpers\Json::encode($financeGraphData) . ";", \yii\web\View::POS_HEAD);
 ?>
 <div>
 	<div class="row">
@@ -267,28 +274,6 @@ $financeGraphSumValue = array_sum($financeGraphValues);
 					</div>
 				</div>
 			</div>
-			<script type="text/javascript">
-				google.charts.setOnLoadCallback(drawChart);
-
-				function drawChart() {
-					var data = google.visualization.arrayToDataTable(<?= \yii\helpers\Json::encode($financeGraphData) ?>);
-
-					var options = {
-						legend: {
-							position: 'none'
-						},
-						pointSize: 5,
-						chartArea: {width: '90%', height: '90%'},
-						hAxis: {minValue: 0, textStyle: {fontSize: 11}},
-						vAxis: {minValue: 0, textStyle: {fontSize: 11}}
-					};
-
-					var chart = new google.visualization.AreaChart(document.getElementById('chart-finance-income-12-month'));
-					chart.draw(data, options);
-				}
-
-				$(window).resize(drawChart);
-			</script>
 		</div>
 	<?php endif; ?>
 </div>

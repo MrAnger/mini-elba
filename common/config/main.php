@@ -1,7 +1,7 @@
 <?php
 
 return [
-	'name'           => 'Mini Elba',
+	'name'           => 'MrAnger Utilities',
 	'language'       => 'ru-RU',
 	'sourceLanguage' => 'en-US',
 	'timeZone'       => 'Europe/Moscow',

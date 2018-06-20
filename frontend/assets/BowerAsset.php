@@ -13,15 +13,9 @@ class BowerAsset extends AssetBundle {
 
 	public $css = [];
 
-	public $js = [
-		//'jquery-sticky/jquery.sticky.js',
-	];
+	public $js = [];
 
 	public $depends = [
 		'yii\web\JqueryAsset',
-	];
-
-	public $jsOptions = [
-		'position' => View::POS_HEAD,
 	];
 }
