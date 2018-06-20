@@ -32,7 +32,10 @@ class PaymentSearch extends Payment {
 	 * @return ActiveDataProvider
 	 */
 	public function search($params, $overriddenParams = []) {
-		$query = Payment::find();
+		$query = Payment::find()
+			->joinWith('contractor')
+			->joinWith('invoiceLinks')
+			->joinWith('invoiceLinks.invoice');
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,

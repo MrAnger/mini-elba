@@ -36,6 +36,6 @@ class InvoiceHelper extends Model {
 	 * @return boolean
 	 */
 	public static function isAvailableDelete($model) {
-		return ($model->getPayments()->count() == 0);
+		return empty($model->payments);
 	}
 }

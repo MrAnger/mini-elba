@@ -32,7 +32,9 @@ class InvoiceSearch extends Invoice {
 	 * @return ActiveDataProvider
 	 */
 	public function search($params, $overriddenParams = []) {
-		$query = Invoice::find();
+		$query = Invoice::find()
+			->joinWith('contractor')
+			->joinWith('payments');
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,

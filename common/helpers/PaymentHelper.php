@@ -51,6 +51,6 @@ class PaymentHelper extends Model {
 	 * @return boolean
 	 */
 	public static function isAvailableDelete($model) {
-		return ($model->getInvoiceLinks()->count() == 0);
+		return empty($model->invoiceLinks);
 	}
 }
