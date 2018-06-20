@@ -33,6 +33,7 @@ class PaymentSearch extends Payment {
 	 */
 	public function search($params, $overriddenParams = []) {
 		$query = Payment::find()
+			->byCurrentUser()
 			->joinWith('contractor')
 			->joinWith('invoiceLinks')
 			->joinWith('invoiceLinks.invoice');
@@ -40,8 +41,6 @@ class PaymentSearch extends Payment {
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
-
-		PaymentHelper::applyAccessByUser($query);
 
 		$this->load($params);
 
@@ -53,9 +52,9 @@ class PaymentSearch extends Payment {
 		$this->clearErrors();
 
 		$query->andFilterWhere([
-			'contractor_id' => $this->contractor_id,
-			'date'          => $this->date,
-			'income'        => $this->income,
+			Payment::tableName() . '.contractor_id' => $this->contractor_id,
+			'date'                                  => $this->date,
+			'income'                                => $this->income,
 		]);
 
 		$query->andFilterWhere(['like', 'description', $this->description]);

@@ -3,20 +3,49 @@
 namespace common\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
+ * This is the model class for table "{{%payment_link_to_invoice}}".
+ *
+ * @property integer $payment_id
+ * @property integer $invoice_id
+ * @property integer $sum
+ *
  * @property Payment $payment
  * @property Invoice $invoice
  */
-class PaymentLinkToInvoice extends PaymentLinkToInvoiceBase {
+class PaymentLinkToInvoice extends ActiveRecord {
+	/**
+	 * @inheritdoc
+	 */
+	public static function tableName() {
+		return '{{%payment_link_to_invoice}}';
+	}
+
 	/**
 	 * @inheritdoc
 	 */
 	public function rules() {
-		return array_merge(parent::rules(), [
+		return [
+			[['payment_id', 'invoice_id', 'sum'], 'required'],
+			[['payment_id', 'invoice_id'], 'integer'],
+			[['sum'], 'number'],
+
 			[['sum'], 'trim'],
 			[['sum'], 'default'],
-		]);
+		];
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function attributeLabels() {
+		return [
+			'payment_id' => Yii::t('app', 'Payment'),
+			'invoice_id' => Yii::t('app', 'Invoice'),
+			'sum'        => Yii::t('app', 'Sum'),
+		];
 	}
 
 	/**

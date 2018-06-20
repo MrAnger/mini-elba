@@ -24,9 +24,10 @@
         "mranger/yii2-ckeditor": "*",
         "himiklab/yii2-sitemap-module" : "*",
         "kartik-v/yii2-widgets": "*",
+        "kartik-v/yii2-datecontrol": "dev-master",
+        "kartik-v/yii2-date-range": "dev-master",
         "insolita/yii2-migration-generator": "^2.2",
-        "bower-asset/growl": "^1.3",
-        "bower-asset/jquery-sticky": "*"
+        "bower-asset/vue": "^2.4"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

@@ -570,30 +570,97 @@
 
     // График на главной странице
     (function () {
-        if (window.financeGraphData === undefined) {
-            return true;
+        if (typeof Vue == 'undefined') {
+            return false;
         }
 
-        google.charts.setOnLoadCallback(drawChart);
+        return new Vue({
+            el: '#payment-graph',
+            data: {
+                info: {
+                    graphData: null,
 
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable(window.financeGraphData);
+                    min: null,
+                    max: null,
+                    avg: null,
+                    total: null,
 
-            var options = {
-                legend: {
-                    position: 'none'
+                    minFormatted: null,
+                    maxFormatted: null,
+                    avgFormatted: null,
+                    totalFormatted: null
                 },
-                pointSize: 5,
-                chartArea: {width: '90%', height: '90%'},
-                hAxis: {minValue: 0, textStyle: {fontSize: 11}},
-                vAxis: {minValue: 0, textStyle: {fontSize: 11}}
-            };
 
-            var chart = new google.visualization.AreaChart(document.getElementById('chart-finance-income-12-month'));
-            chart.draw(data, options);
-        }
+                initiated: false
+            },
 
-        $(window).resize(drawChart);
+            mounted: function () {
+                var vm = this,
+                    $el = $(vm.$el);
+
+                if ($el.data('graph')) {
+                    vm.info = $el.data('graph');
+                }
+
+                google.charts.setOnLoadCallback(function () {
+                    vm.drawChart();
+
+                    vm.initiated = true;
+                });
+
+                $(window).resize(function () {
+                    vm.drawChart();
+                });
+
+                $el.find('form').on('change beforeSubmit', function (e) {
+                    vm.loadData();
+
+                    return false;
+                });
+            },
+
+            watch: {
+                'info.graphData': function (info) {
+                    var vm = this;
+
+                    if (vm.initiated) {
+                        vm.drawChart();
+                    }
+                }
+            },
+
+            methods: {
+                loadData: function () {
+                    var vm = this,
+                        $form = $(vm.$el).find('form');
+
+                    return $.get($form.attr('action'), $form.serialize(), function (response) {
+                        vm.info = response;
+                    }).fail(function (response) {
+                        console.log(response);
+
+                        alert('Ошибка во время выполнения запроса.');
+                    });
+                },
+                drawChart: function () {
+                    var vm = this,
+                        data = google.visualization.arrayToDataTable(vm.info.graphData);
+
+                    var options = {
+                        legend: {
+                            position: 'none'
+                        },
+                        pointSize: 5,
+                        chartArea: {width: '90%', height: '90%'},
+                        hAxis: {minValue: 0, textStyle: {fontSize: 11}},
+                        vAxis: {minValue: 0, textStyle: {fontSize: 11}}
+                    };
+
+                    var chart = new google.visualization.AreaChart($(vm.$el).find('.js-chart')[0]);
+                    chart.draw(data, options);
+                }
+            }
+        });
     })();
 })(jQuery);
 

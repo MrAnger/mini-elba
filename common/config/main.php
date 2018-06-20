@@ -12,7 +12,7 @@ return [
 	'vendorPath'     => dirname(dirname(__DIR__)) . '/vendor',
 	'modules'        => [
 		// read doc in https://github.com/dektrium/yii2-user/blob/master/docs/README.md
-		'user'    => [
+		'user'        => [
 			'class'                    => 'dektrium\user\Module',
 			'enableGeneratingPassword' => false,
 			'enableConfirmation'       => true,
@@ -24,10 +24,43 @@ return [
 			],
 		],
 		// read doc in https://github.com/himiklab/yii2-sitemap-module/blob/master/README.md
-		'sitemap' => [
+		'sitemap'     => [
 			'class'       => 'himiklab\sitemap\Sitemap',
 			'enableGzip'  => true,
 			'cacheExpire' => 1,
+		],
+		'datecontrol' => [
+			'class'              => '\kartik\datecontrol\Module',
+
+			// format settings for displaying each date attribute (ICU format example)
+			'displaySettings'    => [
+				\kartik\datecontrol\Module::FORMAT_DATE     => 'php:d.m.Y',
+				\kartik\datecontrol\Module::FORMAT_TIME     => 'php:H:i',
+				\kartik\datecontrol\Module::FORMAT_DATETIME => 'php:d.m.Y H:i',
+			],
+
+			// format settings for saving each date attribute (PHP format example)
+			'saveSettings'       => [
+				\kartik\datecontrol\Module::FORMAT_DATE     => 'php:Y-m-d', // saves as unix timestamp
+				\kartik\datecontrol\Module::FORMAT_TIME     => 'php:H:i:s',
+				\kartik\datecontrol\Module::FORMAT_DATETIME => 'php:Y-m-d H:i:s',
+			],
+
+			// set your display timezone
+			'displayTimezone'    => 'Europe/Moscow',
+
+			// set your timezone for date saved to db
+			'saveTimezone'       => 'UTC',
+
+			// automatically use kartik\widgets for each of the above formats
+			'autoWidget'         => true,
+
+			// default settings for each widget from kartik\widgets used when autoWidget is true
+			'autoWidgetSettings' => [
+				\kartik\datecontrol\Module::FORMAT_DATE     => ['pluginOptions' => ['autoclose' => true], 'readonly' => true],
+				\kartik\datecontrol\Module::FORMAT_DATETIME => ['pluginOptions' => ['autoclose' => true], 'readonly' => true],
+				\kartik\datecontrol\Module::FORMAT_TIME     => ['pluginOptions' => ['autoclose' => true], 'readonly' => true],
+			],
 		],
 	],
 	'bootstrap'      => [

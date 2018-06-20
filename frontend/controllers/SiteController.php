@@ -1,15 +1,20 @@
 <?php
+
 namespace frontend\controllers;
 
 use common\helpers\InvoiceHelper;
 use common\helpers\PaymentHelper;
 use common\models\Contractor;
+use common\models\data\DebtorStatData;
+use common\models\data\PaymentStatData;
 use common\models\Invoice;
 use common\models\InvoiceItem;
 use common\models\Payment;
+use frontend\models\PaymentGraphForm;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\Response;
 
 /**
  * @author MrAnger
@@ -41,185 +46,117 @@ class SiteController extends BaseController {
 	}
 
 	public function actionIndex() {
-		// Подготавливаем информацию о должниках
-		$queryDebtors = Invoice::find()
-			->where([
-				'is_paid' => 0,
-			]);
+		// Список должников
+		$debtorStatList = $this->getDebtorStatList();
 
-		InvoiceHelper::applyAccessByUser($queryDebtors);
-
-		$debtorList = [];
-
-		foreach ($queryDebtors->all() as $invoice) {
-			/** @var Invoice $invoice */
-			if (!isset($debtorList[$invoice->contractor_id])) {
-				$debtorList[$invoice->contractor_id] = [
-					'contractor'     => $invoice->contractor,
-					'invoiceCount'   => 0,
-					'debtorSum'      => 0,
-					'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id, 'is_paid' => 0]),
-				];
-			}
-
-			$debtorList[$invoice->contractor_id]['invoiceCount']++;
-			$debtorList[$invoice->contractor_id]['debtorSum'] += ($invoice->summary - $invoice->total_paid);
-		}
-
-		// Подготавливаем суммарную статистику за все время
-		$payments = PaymentHelper::applyAccessByUser(Payment::find())->all();
-
-		$statList = [];
-
-		foreach ($payments as $payment) {
-			/** @var Payment $payment */
-			if (!isset($statList[$payment->contractor_id])) {
-				$statList[$payment->contractor_id] = [
-					'contractor'     => $payment->contractor,
-					'invoiceCount'   => 0,
-					'summary'        => 0,
-					'total_paid'     => 0,
-					'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $payment->contractor->id]),
-					'paymentListUrl' => Url::to(['/payment/index', 'contractor_id' => $payment->contractor->id]),
-				];
-			}
-
-			$statList[$payment->contractor_id]['total_paid'] += $payment->income;
-		}
-
-		foreach ($statList as $statItem) {
-			/** @var Contractor $contractor */
-			$contractor = $statItem['contractor'];
-
-			$statList[$contractor->id]['invoiceCount'] = $contractor->getInvoices()->count();
-			$statList[$contractor->id]['summary'] += $contractor->getInvoices()->sum('summary');
-		}
-
-		// Подготавливаем расширенную информацию о должниках
-		$debtorDetailList = [];
-
-		/** @var Invoice[] $invoiceNotPaidList */
-		$invoiceNotPaidList = InvoiceHelper::applyAccessByUser(Invoice::find()->where(['is_paid' => 0]))
-			->orderBy([
-				'created_at' => SORT_DESC,
-				'id'         => SORT_DESC,
-			])
-			->all();
-
-		foreach ($invoiceNotPaidList as $invoice) {
-			if (!isset($debtorDetailList[$invoice->contractor_id])) {
-				$debtorDetailList[$invoice->contractor_id] = [
-					'contractor'     => $invoice->contractor,
-					'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id, 'is_paid' => 0]),
-					'debtorSum'      => 0,
-					'invoiceList'    => [],
-				];
-			}
-
-			$invoiceData = [
-				'invoice'    => $invoice,
-				'invoiceUrl' => Url::to(['/invoice/view', 'id' => $invoice->id]),
-				'items'      => $invoice->getItems()
-					->andWhere(['=', 'is_paid', 0])
-					->all(),
-			];
-
-			$debtorDetailList[$invoice->contractor_id]['invoiceList'][] = $invoiceData;
-			$debtorDetailList[$invoice->contractor_id]['debtorSum'] += $invoice->summary - $invoice->total_paid;
-		}
+		// Список выплат
+		$paymentStatList = $this->getPaymentStatList();
 
 		// Подготавливаем информацию о финансах для графика
-		$financeGraphStat = [];
-
-		// Подгатавливаем каркас данных для последних двух месяцев
-		$date = date_create();
-		$date->setDate($date->format('Y'), $date->format('m'), 1);
-		$date->add(date_interval_create_from_date_string('-12 months'));
-
-		$firstDateRange = null;
-		$lastDateRange = null;
-		for ($i = 1; $i <= 12; $i++) {
-			$date->add(date_interval_create_from_date_string("+1 months"));
-
-			$dateIndex = $date->format('Y-m-d');
-
-			$financeGraphStat[$this->formatDateToFinanceStatGraph($date)] = [];
-
-			if ($i == 1)
-				$firstDateRange = $dateIndex;
-
-			if ($i == 12)
-				$lastDateRange = $dateIndex;
-		}
-
-		// Теперь необходимо последнюю дату выбранного диапазона сделать последним числом выбранного месяца
-		$lastDateRange = date_create_from_format('Y-m-d', $lastDateRange);
-		$lastDateRange->add(date_interval_create_from_date_string("+1 months"));
-		$lastDateRange->add(date_interval_create_from_date_string("-1 days"));
-		$lastDateRange = $lastDateRange->format('Y-m-d');
-
-		$queryPayments = PaymentHelper::applyAccessByUser(Payment::find()
-			->where([
-				'AND',
-				['between', 'date', $firstDateRange, $lastDateRange],
-				['=', 'is_include_into_stat', 1],
-			]));
-
-		$queryPaymentsClone = clone $queryPayments;
-		$contractorIds = $queryPaymentsClone->select(['contractor_id'])
-			->distinct()
-			->column();
-
-		foreach ($contractorIds as $contractorId) {
-			$contractor = Contractor::findOne($contractorId);
-
-			foreach ($financeGraphStat as &$item) {
-				$item[$contractor->id] = [
-					'contractorName' => $contractor->name,
-					'value'          => 0,
-				];
-			}
-		}
-
-		foreach ($queryPayments->all() as $payment) {
-			/** @var Payment $payment */
-
-			$financeGraphStat[$this->formatDateToFinanceStatGraph($payment->date)][$payment->contractor_id]['value'] += $payment->income;
-		}
+		$paymentGraphForm = new PaymentGraphForm();
+		$paymentGraphData = $paymentGraphForm->calculate(Yii::$app->request->getQueryParams());
+		$paymentGraphData = $paymentGraphForm->formatData($paymentGraphData);
 
 		return $this->render('index', [
-			'debtorList'       => $debtorList,
-			'debtorDetailList' => $debtorDetailList,
-			'statList'         => $statList,
-			'financeGraphStat' => $financeGraphStat,
+			'debtorStatList'   => $debtorStatList,
+			'paymentStatList'  => $paymentStatList,
+			'paymentGraphData' => $paymentGraphData,
+
+			'paymentGraphForm' => $paymentGraphForm,
 		]);
 	}
 
+	public function actionGetPaymentGraphData() {
+		Yii::$app->response->format = Response::FORMAT_JSON;
+
+		$paymentGraphForm = new PaymentGraphForm();
+		$paymentGraphData = $paymentGraphForm->calculate(Yii::$app->request->getQueryParams());
+
+		return $paymentGraphForm->formatData($paymentGraphData);
+	}
+
 	/**
-	 * @param string|\DateTime $date
-	 *
-	 * @return string
+	 * @return DebtorStatData[]
 	 */
-	private function formatDateToFinanceStatGraph($date) {
-		if (is_string($date))
-			$date = date_create($date);
+	private function getDebtorStatList() {
+		/** @var DebtorStatData[] $output */
+		$output = [];
 
-		$monthNameMap = [
-			'01' => 'Январь',
-			'02' => 'Февраль',
-			'03' => 'Март',
-			'04' => 'Апрель',
-			'05' => 'Май',
-			'06' => 'Июнь',
-			'07' => 'Июль',
-			'08' => 'Август',
-			'09' => 'Сентябрь',
-			'10' => 'Октрябрь',
-			'11' => 'Ноябрь',
-			'12' => 'Декабрь',
-		];
+		$query = Invoice::find()
+			->byCurrentUser()
+			->notPaid()
+			->joinWith('contractor')
+			->joinWith('items')
+			->orderBy([
+				'created_at' => SORT_DESC,
+				'id'         => SORT_DESC,
+			]);
 
-		return ArrayHelper::getValue($monthNameMap, $date->format('m')) . $date->format(' Y');
+		foreach ($query->batch() as $batch) {
+			foreach ($batch as $invoice) {
+				/** @var Invoice $invoice */
+				if (!array_key_exists($invoice->contractor_id, $output)) {
+					$output[$invoice->contractor_id] = new DebtorStatData([
+						'contractor'   => $invoice->contractor,
+						'invoiceCount' => 0,
+						'debtorSum'    => 0,
+						'invoiceList'  => [],
+						'options'      => [
+							'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $invoice->contractor->id, 'is_paid' => 0]),
+						],
+					]);
+				}
+
+				$output[$invoice->contractor_id]->invoiceList[] = [
+					$invoice,
+					Url::to(['/invoice/view', 'id' => $invoice->id]),
+					array_filter($invoice->items, function (InvoiceItem $model) {
+						return ($model->is_paid == 0);
+					}),
+				];
+
+				$output[$invoice->contractor_id]->invoiceCount++;
+				$output[$invoice->contractor_id]->debtorSum += ($invoice->summary - $invoice->total_paid);
+			}
+		}
+
+		return array_values($output);
+	}
+
+	/**
+	 * @return PaymentStatData[]
+	 */
+	private function getPaymentStatList() {
+		/** @var PaymentStatData[] $output */
+		$output = [];
+
+		$query = Payment::find()
+			->byCurrentUser()
+			->includedIntoStat()
+			->joinWith('contractor contractor')
+			->orderBy(['contractor.name' => SORT_ASC]);
+
+		foreach ($query->batch() as $batch) {
+			foreach ($batch as $payment) {
+				/** @var Payment $payment */
+				if (!array_key_exists($payment->contractor_id, $output)) {
+					$output[$payment->contractor_id] = new PaymentStatData([
+						'contractor'   => $payment->contractor,
+						'invoiceCount' => count($payment->contractor->invoices),
+						'summary'      => array_sum(ArrayHelper::getColumn($payment->contractor->invoices, 'summary')),
+						'paid'         => 0,
+						'options'      => [
+							'invoiceListUrl' => Url::to(['/invoice/index', 'contractor_id' => $payment->contractor->id]),
+							'paymentListUrl' => Url::to(['/payment/index', 'contractor_id' => $payment->contractor->id]),
+						],
+					]);
+				}
+
+				$output[$payment->contractor_id]->paid += $payment->income;
+			}
+		}
+
+		return array_values($output);
 	}
 
 	public function beforeAction($action) {

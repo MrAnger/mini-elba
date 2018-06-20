@@ -21,6 +21,21 @@ Yii::$container->set('yii\web\JqueryAsset', [
 	],
 ]);
 
+Yii::$container->set('kartik\daterange\DateRangePicker', [
+	'convertFormat' => true,
+	'pluginOptions' => [
+		'locale' => [
+			'format' => 'Y-m-d',
+			/*'daysOfWeek' => ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+			'monthNames' => ["Янвварь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],*/
+		],
+	],
+	'options'       => [
+		'class'        => 'form-control',
+		'autocomplete' => 'off',
+	],
+]);
+
 Yii::$container->set('yii\debug\Module', [
 	'allowedIPs' => [
 		'127.0.0.1', '::1',

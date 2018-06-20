@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\helpers\InvoiceHelper;
+use common\models\Contractor;
 use common\models\Invoice;
 use Yii;
 use yii\base\Model;
@@ -33,14 +34,13 @@ class InvoiceSearch extends Invoice {
 	 */
 	public function search($params, $overriddenParams = []) {
 		$query = Invoice::find()
+			->byCurrentUser()
 			->joinWith('contractor')
 			->joinWith('payments');
 
 		$dataProvider = new ActiveDataProvider([
 			'query' => $query,
 		]);
-
-		InvoiceHelper::applyAccessByUser($query);
 
 		$this->load($params);
 
@@ -52,8 +52,8 @@ class InvoiceSearch extends Invoice {
 		$this->clearErrors();
 
 		$query->andFilterWhere([
-			'contractor_id' => $this->contractor_id,
-			'is_paid'       => $this->is_paid,
+			Invoice::tableName() . '.contractor_id' => $this->contractor_id,
+			'is_paid'                               => $this->is_paid,
 		]);
 
 		$query->andFilterWhere(['like', 'name', $this->name]);
