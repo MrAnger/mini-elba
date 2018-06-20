@@ -15,6 +15,12 @@ Yii::$container->set('kartik\widgets\DatePicker', [
 	],
 ]);
 
+Yii::$container->set('yii\web\JqueryAsset', [
+	'js' => [
+		'jquery.min.js',
+	],
+]);
+
 Yii::$container->set('yii\debug\Module', [
 	'allowedIPs' => [
 		'127.0.0.1', '::1',
