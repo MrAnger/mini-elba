@@ -48,6 +48,17 @@ a.desc:after {
     margin: 0 0 15px 0;
 }
 
+@media screen and (max-width: 640px) {
+    .grid-view {
+        overflow-x: scroll;
+    }
+
+    table {
+        overflow-x: auto;
+        display: block;
+    }
+}
+
 .action-column {
     width: 75px;
 }
