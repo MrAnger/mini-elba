@@ -476,12 +476,16 @@
                     // Все прошло успешно, проверяем, необходимо ли обновить какой либо pjax контейнер и закрываем модальное окно
                     var updatePjax = $form.data('update-pjax');
                     if (updatePjax && $(updatePjax).length > 0) {
-                        $.pjax({
-                            url: window.location.href,
-                            container: $(updatePjax),
-                            scrollTo: false,
-                            timeout: 8000
-                        });
+                        try {
+                            $.pjax({
+                                url: window.location.href,
+                                container: $(updatePjax),
+                                scrollTo: false,
+                                timeout: 8000
+                            });
+                        } catch (e) {
+                            window.location.reload();
+                        }
                     }
 
                     $modal.modal('hide');
