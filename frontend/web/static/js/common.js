@@ -488,7 +488,7 @@
                 } else {
                     alert(response.errors.join("\n"));
                 }
-            }).error(function () {
+            }).fail(function () {
                 alert('Произошла ошибка при отправке запроса на сервер.');
             });
         };
