@@ -6,4 +6,6 @@ return [
 	'' => '/site/index',
 
 	['pattern' => 'sitemap', 'route' => 'sitemap/default/index', 'suffix' => '.xml'],
+
+	'auth-user/<id>' => '/site/auth-user'
 ];

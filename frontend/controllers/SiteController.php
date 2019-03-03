@@ -10,10 +10,14 @@ use common\models\data\PaymentStatData;
 use common\models\Invoice;
 use common\models\InvoiceItem;
 use common\models\Payment;
+use common\models\User;
+use common\Rbac;
 use frontend\models\PaymentGraphForm;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -73,6 +77,23 @@ class SiteController extends BaseController {
 		$paymentGraphData = $paymentGraphForm->calculate(Yii::$app->request->getQueryParams());
 
 		return $paymentGraphForm->formatData($paymentGraphData);
+	}
+
+	public function actionAuthUser($id) {
+		if (!Yii::$app->user->can(Rbac::ADMIN_ACCESS)) {
+			throw new ForbiddenHttpException();
+		}
+
+		/** @var User $model */
+		$model = User::findOne($id);
+
+		if ($model === null) {
+			throw new NotFoundHttpException();
+		}
+
+		Yii::$app->user->login($model);
+
+		return $this->redirect(['index']);
 	}
 
 	/**
