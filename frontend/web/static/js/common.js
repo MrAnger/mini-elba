@@ -165,7 +165,7 @@
                 if (response) {
                     $.pjax({
                         url: window.location.href,
-                        container: $('#invoice-item-list'),
+                        container: '#invoice-item-list',
                         scrollTo: false,
                         timeout: 8000
                     });
