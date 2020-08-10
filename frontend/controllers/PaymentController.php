@@ -138,7 +138,7 @@ class PaymentController extends BaseController {
 		// Далее добавляем те счета, которые можно привязать к этому поступлению
 		$invoices = InvoiceHelper::applyAccessByUser(Invoice::find()->where([
 			'AND',
-			['=', 'contractor_id', $paymentModel->contractor_id],
+			//['=', 'contractor_id', $paymentModel->contractor_id],
 			['=', 'is_paid', 0],
 			['not in', 'id', ArrayHelper::getColumn($invoiceList, 'id')],
 		])
