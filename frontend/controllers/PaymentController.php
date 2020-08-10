@@ -126,6 +126,7 @@ class PaymentController extends BaseController {
 		// Сначала добавляем уже привязанные счета
 		foreach ($paymentModel->invoiceLinks as $link) {
 			$invoiceList[] = [
+				'contractor_name' => $link->invoice->contractor->name,
 				'id'         => $link->invoice->id,
 				'name'       => $link->invoice->name,
 				'total_paid' => $link->invoice->total_paid,
@@ -151,6 +152,7 @@ class PaymentController extends BaseController {
 			$invoiceList[] = [
 				'id'         => $invoice->id,
 				'name'       => $invoice->name,
+				'contractor_name' => $invoice->contractor->name,
 				'total_paid' => $invoice->total_paid,
 				'summary'    => $invoice->summary,
 				'linked'     => false,

@@ -58,6 +58,7 @@ $emptyPaymentLinkModel = new \common\models\PaymentLinkToInvoice();
 						</td>
 						<td>
 							<a href="#" target="_blank" class="js-name" style="font-weight: bold;"></a>
+                            <small class="js-hint"></small>
 
 							<div class="js-sum-left">
 								<small class="value"></small>

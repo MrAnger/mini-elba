@@ -220,6 +220,7 @@
                 var $item = $($invoiceTemplate.html()),
                     $checkBoxInput = $item.find('.js-checked'),
                     $nameHolder = $item.find('.js-name'),
+                    $hintHolder = $item.find('.js-hint'),
                     $sumLeftHolder = $item.find('.js-sum-left'),
                     $linkedSumInput = $item.find('.js-input-sum'),
                     $linkedSumFakeHolder = $item.find('.js-fake-input-sum'),
@@ -232,6 +233,7 @@
                 $checkBoxInput.prop('checked', (invoice.linked) ? true : false);
                 $nameHolder.attr('href', invoice.invoiceUrl);
                 $nameHolder.html(invoice.name);
+                $hintHolder.html(invoice.contractor_name);
 
                 // Настраиваем первичное отображения инпутов линкованной суммы
                 initLinkedSumInput();
